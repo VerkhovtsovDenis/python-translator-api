@@ -93,7 +93,28 @@ class Lexer:
         if token.token_type == TOKEN_TYPES_LIST.get('Newline'):
             self.__line += 1
             self.__relative_pos = 0
-        # сюда можно добавить проверку
+
+        # finding errors
+        elif token.token_type == TOKEN_TYPES_LIST.get('Number Integer'):
+            self.__check_number_integer_token(token)
+        elif token.token_type == TOKEN_TYPES_LIST.get('Number Real'):
+            self.__check_number_real_token(token)
+        elif token.token_type == TOKEN_TYPES_LIST.get('String'):
+            self.__check_string_token(token)
+        elif token.token_type == TOKEN_TYPES_LIST.get('Id'):
+            self.__check_id_token(token)
+
+    def __check_number_integer_token(self, token):
+        pass
+
+    def __check_number_real_token(self, token):
+        pass
+
+    def __check_string_token(self, token):
+        pass
+
+    def __check_id_token(self, token):
+        pass
 
 
 class UnknownTokenException(Exception):
