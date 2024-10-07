@@ -19,7 +19,6 @@ TOKEN_TYPES_LIST = {
     'Сolon': TokenType('Сolon', r':'),
     'Dot': TokenType('Dot', r'\.'),
     'Comma': TokenType('Comma', r','),
-    'Quotation Mark': TokenType('Quotation Mark', r"'"),
     'Left Bracket': TokenType('Left Bracket', r'\('),
     'Right Bracket': TokenType('Right Bracket', r'\)'),
 
@@ -29,6 +28,9 @@ TOKEN_TYPES_LIST = {
     'Program': TokenType('Program', r'Program'),
     'Const': TokenType('Const', r'Const'),
     'Var': TokenType('Var', r'Var'),
+    'FUNCTION': TokenType('FUNCTION', r'FUNCTION'),
+    'PROCEDURE': TokenType('PROCEDURE', r'PROCEDURE'),
+    'ARRAY': TokenType('ARRAY', r'ARRAY'),
 
     'Writeln': TokenType('Writeln', r'Writeln'),
     'Readln': TokenType('Readln', r'Readln'),
