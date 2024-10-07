@@ -24,6 +24,7 @@ class Lexer:
         """Lazy returns tokens"""
         token = self.__next_token()
         while token:
+            self.__postprocess(token)
             self.__tokens.append(token)
             yield token
             token = self.__next_token()
@@ -68,8 +69,6 @@ class Lexer:
         # so need find the longest of them
 
         token = max(possible_tokens, key=lambda x: len(x.string))
-
-        self.__postprocess(token)
         return token
 
     def __preprocess(self):
