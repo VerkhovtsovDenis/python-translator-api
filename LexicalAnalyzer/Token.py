@@ -2,10 +2,14 @@ from .TokenType import TokenType
 
 
 class Token:
-    def __init__(self, token_type: TokenType, value, line, pos):
+    def __init__(self, *, token_type: TokenType, string, value, line, pos):
 
         self.token_type = token_type
-        self.value = value
+
+        # to understand why we create both string and value see example
+        self.string = string  # example '"Привет мир!"'
+        self.value = value  # example 'Привет мир!'
+
         self.line = line
         self.pos = pos
 

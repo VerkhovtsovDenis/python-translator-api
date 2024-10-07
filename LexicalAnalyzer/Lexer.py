@@ -47,8 +47,11 @@ class Lexer:
             result = re.match(regex, text, flags=re.I)
 
             if result:
-                value = result.group(0)
-                token = Token(token_type, value,
+                string = result.group(0)
+                value = result.group(1)
+                token = Token(token_type=token_type,
+                              string=string,
+                              value=value,
                               line=self.__line,
                               pos=self.__relative_pos)
                 possible_tokens.append(token)
@@ -64,7 +67,7 @@ class Lexer:
         # and match with id token 'begin_value'
         # so need find the longest of them
 
-        token = max(possible_tokens, key=lambda x: len(x.value))
+        token = max(possible_tokens, key=lambda x: len(x.string))
 
         self.__postprocess(token)
         return token
@@ -85,11 +88,12 @@ class Lexer:
 
     def __postprocess(self, token):
         """Actions before find token"""
-        self.__increment_pos(len(token.value))
+        self.__increment_pos(len(token.string))
 
         if token.token_type == TOKEN_TYPES_LIST.get('Newline'):
             self.__line += 1
             self.__relative_pos = 0
+        # сюда можно добавить проверку
 
 
 class UnknownTokenException(Exception):

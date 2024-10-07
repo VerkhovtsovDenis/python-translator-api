@@ -62,7 +62,7 @@ TOKEN_TYPES_LIST = {
     'Plus': TokenType('Plus', r'(\+)'),
     'Minus': TokenType('Minus', r'(-)'),
     'Multiply': TokenType('Multiply', r'(\*)'),
-    'Division': TokenType('Division', r'(/))'),
+    'Division': TokenType('Division', r'(\))'),
     'Div': TokenType('Div', r'(div)'),
     'Mod': TokenType('Mod', r'(mod)'),
 
@@ -81,7 +81,7 @@ TOKEN_TYPES_LIST = {
 
     # ids
     'Number Integer': TokenType('Number Integer', r'(\d+)'),
-    'Number Real': TokenType('Number Real', r'(\d+)(.(\d+))?'),
+    'Number Real': TokenType('Number Real', r'(\d+\.\d+)'),
     'String': TokenType('String', r"'(.*)'"),
     'Id': TokenType('Id', r'([a-zA-Z_]\w*)'),
     'Single Line Comment': TokenType('Single Line', r'\/\/(.*\n)'),
