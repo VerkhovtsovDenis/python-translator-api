@@ -84,6 +84,6 @@ TOKEN_TYPES_LIST = {
     'Number Real': TokenType('Number Real', r'(\d+\.\d+)'),
     'String': TokenType('String', r"'(.*)'"),
     'Id': TokenType('Id', r'([a-zA-Z_]\w*)'),
-    'Single Line Comment': TokenType('Single Line', r'\/\/(.*\n)'),
+    'Single Line Comment': TokenType('Single Line Comment', r'\/\/(.*\n)'),
     'Multi Line Comment': TokenType('Multi Line Comment', r'\{([^{}]*)\}'),
 }
