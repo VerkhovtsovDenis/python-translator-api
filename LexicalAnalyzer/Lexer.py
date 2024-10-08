@@ -7,6 +7,9 @@ from .TokenType import TOKEN_TYPES_LIST
 class Lexer:
 
     def __init__(self, inpt):
+        """
+        inpt: str - code in Pascal
+        """
         self.__input = inpt
         self.__input_len = len(inpt)
 
