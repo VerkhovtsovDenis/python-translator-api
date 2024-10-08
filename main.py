@@ -70,9 +70,9 @@ example_programms_with_errors = [
 def parse_programm(programm):
     lexer = Lexer(inpt=programm)
     ignore_tokens = (
-        TOKEN_TYPES_LIST.get('Newline'),
-        TOKEN_TYPES_LIST.get('Whitesapce'),
-        TOKEN_TYPES_LIST.get('Tabulation'),
+        TOKEN_TYPES_LIST.newline_token,
+        TOKEN_TYPES_LIST.whitesapce_token,
+        TOKEN_TYPES_LIST.tabulation_token,
     )
 
     print('our code:')

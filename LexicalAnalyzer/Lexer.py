@@ -43,7 +43,7 @@ class Lexer:
         possible_tokens = []
 
         # find posiible tokens
-        for token_type in TOKEN_TYPES_LIST.values():
+        for token_type in TOKEN_TYPES_LIST:
             regex = token_type.regex
             result = re.match(regex, text, flags=re.I)
 
@@ -89,18 +89,18 @@ class Lexer:
         """Actions before find token"""
         self.__increment_pos(len(token.string))
 
-        if token.token_type == TOKEN_TYPES_LIST.get('Newline'):
+        if token.token_type == TOKEN_TYPES_LIST.newline_token:
             self.__line += 1
             self.__relative_pos = 0
 
         # finding errors
-        elif token.token_type == TOKEN_TYPES_LIST.get('Number Integer'):
+        elif token.token_type == TOKEN_TYPES_LIST.number_integer_token:
             self.__check_number_integer_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.get('Number Real'):
+        elif token.token_type == TOKEN_TYPES_LIST.number_real_token:
             self.__check_number_real_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.get('String'):
+        elif token.token_type == TOKEN_TYPES_LIST.string_token:
             self.__check_string_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.get('Id'):
+        elif token.token_type == TOKEN_TYPES_LIST.id_token:
             self.__check_id_token(token)
 
     def __check_number_integer_token(self, token):

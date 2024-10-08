@@ -1,3 +1,6 @@
+from collections import namedtuple
+
+
 class TokenType:
     def __init__(self, name, regex):
         self.name = name
@@ -15,79 +18,80 @@ class TokenType:
 
 TOKEN_TYPES = [
     # delimeters
-    TokenType('Whitesapce', r'( )'),
-    TokenType('Tabulation', r'(\t)'),
-    TokenType('Newline', r'(\n)'),
-    TokenType('Semicolon', r'(;)'),
-    TokenType('Сolon', r'(:)'),
-    TokenType('Dot', r'(\.)'),
-    TokenType('Comma', r'(,)'),
-    TokenType('LeftBracket', r'(\()'),
-    TokenType('RightBracket', r'(\))'),
+    TokenType('whitesapce_token', r'( )'),
+    TokenType('tabulation_token', r'(\t)'),
+    TokenType('newline_token', r'(\n)'),
+    TokenType('semicolon_token', r'(;)'),
+    TokenType('colon_token', r'(:)'),
+    TokenType('dot_token', r'(\.)'),
+    TokenType('comma_token', r'(,)'),
+    TokenType('left_bracket_token', r'(\()'),
+    TokenType('right_bracket_token', r'(\))'),
 
     # keywords
-    TokenType('Begin', r'(Begin)'),
-    TokenType('End', r'(End)'),
-    TokenType('Program', r'(Program)'),
-    TokenType('Const', r'(Const)'),
-    TokenType('Var', r'(Var)'),
-    TokenType('FUNCTION', r'(FUNCTION)'),
-    TokenType('PROCEDURE', r'(PROCEDURE)'),
-    TokenType('ARRAY', r'(ARRAY)'),
+    TokenType('begin_token', r'(Begin)'),
+    TokenType('end_token', r'(End)'),
+    TokenType('program_token', r'(Program)'),
+    TokenType('const_token', r'(Const)'),
+    TokenType('var_token', r'(Var)'),
+    TokenType('function_token', r'(FUNCTION)'),
+    TokenType('procedure_token', r'(PROCEDURE)'),
+    TokenType('array_token', r'(ARRAY)'),
 
-    TokenType('Writeln', r'(Writeln)'),
-    TokenType('Readln', r'(Readln)'),
+    TokenType('writeln_token', r'(Writeln)'),
+    TokenType('readln_token', r'(Readln)'),
 
-    TokenType('If', r'(If)'),
-    TokenType('Then', r'(Then)'),
-    TokenType('Else', r'(Else)'),
+    TokenType('if_token', r'(If)'),
+    TokenType('then_token', r'(Then)'),
+    TokenType('else_token', r'(Else)'),
 
-    TokenType('For', r'(For)'),
-    TokenType('While', r'(While)'),
-    TokenType('To', r'(To)'),
-    TokenType('Do', r'(Do)'),
+    TokenType('for_token', r'(For)'),
+    TokenType('while_token', r'(While)'),
+    TokenType('to_token', r'(To)'),
+    TokenType('do_token', r'(Do)'),
 
-    TokenType('True', r'(True)'),
-    TokenType('False', r'(False)'),
+    TokenType('true_token', r'(True)'),
+    TokenType('false_token', r'(False)'),
 
     # data types
-    TokenType('IntegerType', r'(Integer)'),
-    TokenType('RealType', r'(Real)'),
+    TokenType('integer_type_token', r'(Integer)'),
+    TokenType('real_type_token', r'(Real)'),
 
-    TokenType('StringType', r'(String)'),
-    TokenType('CharType', r'(Char)'),
+    TokenType('string_type_token', r'(String)'),
+    TokenType('char_type_token', r'(Char)'),
 
-    TokenType('Boolean Type', r'(Boolean)'),
+    TokenType('boolean_type_token', r'(Boolean)'),
 
     # operators
-    TokenType('Plus', r'(\+)'),
-    TokenType('Minus', r'(-)'),
-    TokenType('Multiply', r'(\*)'),
-    TokenType('Division', r'(\))'),
-    TokenType('Div', r'(div)'),
-    TokenType('Mod', r'(mod)'),
+    TokenType('plus_token', r'(\+)'),
+    TokenType('minus_token', r'(-)'),
+    TokenType('multiply_token', r'(\*)'),
+    TokenType('division_token', r'(\))'),
+    TokenType('div_token', r'(div)'),
+    TokenType('mod_token', r'(mod)'),
 
-    TokenType('Assignment', r'(:=)'),
+    TokenType('assignment_token', r'(:=)'),
 
-    TokenType('Equal', r'(=)'),
-    TokenType('NotEqual', r'(<>)'),
-    TokenType('LessThan', r'(<)'),
-    TokenType('GreaterThan', r'(>)'),
-    TokenType('LessThanOrEqual', r'(<=)'),
-    TokenType('GreaterThanOrEqual', r'(>=)'),
+    TokenType('equal_token', r'(=)'),
+    TokenType('not_equal_token', r'(<>)'),
+    TokenType('less_than_token', r'(<)'),
+    TokenType('greater_than_token', r'(>)'),
+    TokenType('less_than_or_equal_token', r'(<=)'),
+    TokenType('greater_than_or_equal_token', r'(>=)'),
 
-    TokenType('And', r'(And)'),
-    TokenType('Or', r'(Or)'),
-    TokenType('GreaterThanOrEqual', r'(Not)'),
+    TokenType('and_token', r'(And)'),
+    TokenType('or_token', r'(Or)'),
+    TokenType('not_token', r'(Not)'),
 
     # ids
-    TokenType('NumberInteger', r'(\d+)'),
-    TokenType('NumberReal', r'(\d+\.\d+)'),
-    TokenType('String', r"'(.*)'"),
-    TokenType('Id', r'([a-zA-Z_]\w*)'),
-    TokenType('SingleLineComment', r'\/\/(.*\n)'),
-    TokenType('MultiLineComment', r'\{([^{}]*)\}'),
+    TokenType('number_integer_token', r'(\d+)'),
+    TokenType('number_real_token', r'(\d+\.\d+)'),
+    TokenType('string_token', r"'(.*)'"),
+    TokenType('id_token', r'([a-zA-Z_]\w*)'),
+    TokenType('single_line_comment_token', r'\/\/(.*\n)'),
+    TokenType('multi_line_comment_token', r'\{([^{}]*)\}'),
 ]
 
+Tokens = namedtuple('Tokens', list(map(lambda x: x.name, TOKEN_TYPES)))
 
-TOKEN_TYPES_LIST = {token_type.name: token_type for token_type in TOKEN_TYPES}
+TOKEN_TYPES_LIST = Tokens(*TOKEN_TYPES)
