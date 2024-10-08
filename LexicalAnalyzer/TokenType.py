@@ -6,7 +6,8 @@ class TokenType:
 
 # regular expressions can create in any case
 # it ignore in Lexer
-# token value must be in the 0 group
+# token string must be in the 0 group
+# token value must be in the 1 group
 
 
 # preference is always given to the longest occurrence
