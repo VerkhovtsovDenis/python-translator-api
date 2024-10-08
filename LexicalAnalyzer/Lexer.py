@@ -94,14 +94,18 @@ class Lexer:
             self.__relative_pos = 0
 
         # finding errors
-        elif token.token_type == TOKEN_TYPES_LIST.number_integer_token:
-            self.__check_number_integer_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.number_real_token:
-            self.__check_number_real_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.string_token:
-            self.__check_string_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.id_token:
-            self.__check_id_token(token)
+        match token.token_type:
+            case TOKEN_TYPES_LIST.number_integer_token:
+                self.__check_number_integer_token(token)
+
+            case TOKEN_TYPES_LIST.number_real_token:
+                self.__check_number_real_token(token)
+
+            case TOKEN_TYPES_LIST.__check_string_token:
+                self.__check_string_token(token)
+
+            case TOKEN_TYPES_LIST.id_token:
+                self.__check_id_token(token)
 
     def __check_number_integer_token(self, token):
         pass
