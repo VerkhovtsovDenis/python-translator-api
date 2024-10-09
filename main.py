@@ -1,15 +1,8 @@
 from LexicalAnalyzer import Lexer, FileManager
-from LexicalAnalyzer.TokenType import TOKEN_TYPES_LIST
 
 
 def parse_programm(programm):
     lexer = Lexer(code=programm)
-
-    ignore_tokens = (
-        TOKEN_TYPES_LIST.get('Newline'),
-        TOKEN_TYPES_LIST.get('Whitesapce'),
-        TOKEN_TYPES_LIST.get('Tabulation'),
-    )
 
     print('our code:')
     print('--------')
@@ -18,8 +11,7 @@ def parse_programm(programm):
     print('Tokens:')
 
     for token in lexer.tokenize():
-        if token.token_type not in ignore_tokens:
-            print(token)
+        print(token)
 
 
 if __name__ == "__main__":
