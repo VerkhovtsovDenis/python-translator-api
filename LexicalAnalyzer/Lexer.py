@@ -1,16 +1,17 @@
 import re
 from .Token import Token
-from .TokenType import TOKEN_TYPES_LIST
-from .TokenType import TokenType
+from .TokenType import TokenType, TokenTypes
 from typing import Optional, List, Dict
 
 
 class FileManager:
     @staticmethod
-    def get_code(filepath: str) -> str:
+    def get_code(filepath: str, isrstrip=False) -> str:
         code: str = ''
         with open(filepath, 'r', encoding='utf-8') as file:
             codelines = file.readlines()
+        if isrstrip:
+            codelines = [line[:-1] for line in codelines]
         code = ''.join(codelines)
         return code
 
@@ -55,7 +56,6 @@ class Lexer:
         if self.__pos >= self.__input_len:
             return None
 
-        # first, need ignore double spaces
         self.__preprocess()
 
         # part of the input is analyzing now
@@ -64,11 +64,13 @@ class Lexer:
         possible_tokens: List[Token] = []
 
         # find posiible tokens
-        for token_type in TOKEN_TYPES_LIST.values():
-            regex = token_type.regex
+        for token_type in TokenTypes:
+            regex = token_type.value.regex
             result = re.match(regex, text, flags=re.I)
 
             if result:
+                print(f"Matched token: {token_type}, value: {result.group(1)}")
+
                 string = result.group(0)
                 value = result.group(1)
                 token = Token(token_type=token_type,
@@ -110,18 +112,18 @@ class Lexer:
         """Actions before find token"""
         self.__increment_pos(len(token.string))
 
-        if token.token_type == TOKEN_TYPES_LIST.get('Newline'):
+        if token.token_type == TokenTypes.NEWLINE:
             self.__line += 1
             self.__relative_pos = 0
 
         # finding errors
-        elif token.token_type == TOKEN_TYPES_LIST.get('Number Integer'):
+        elif token.token_type == TokenTypes.NUMBER_INTEGER:
             self.__check_number_integer_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.get('Number Real'):
+        elif token.token_type == TokenTypes.NUMBER_REAL:
             self.__check_number_real_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.get('String'):
+        elif token.token_type == TokenTypes.STRING:
             self.__check_string_token(token)
-        elif token.token_type == TOKEN_TYPES_LIST.get('Id'):
+        elif token.token_type == TokenTypes.ID:
             self.__check_id_token(token)
 
     def __check_number_integer_token(self, token):

@@ -16,3 +16,6 @@ class Token:
     def __str__(self):
         return (f'token: {self.token_type.name}, value: {repr(self.value)}'
                 f' in line: {self.line+1}, pos: {self.pos+1}')
+
+    def __repr__(self):
+        return f"<Token(value={self.value}, regex={self.token_type})>"

@@ -1,7 +1,7 @@
 # flake8: noqa: F401
-from LexicalAnalyzer.Lexer import Lexer, FileManager
-from LexicalAnalyzer.Token import Token
-from LexicalAnalyzer.TokenType import TokenType, TOKEN_TYPES_LIST
+from .Lexer import *
+from .Token import *
+from .TokenType import *
 
 
 __all__ = [
@@ -9,5 +9,5 @@ __all__ = [
     "FileManager",
     "Token", 
     "TokenType", 
-    "TOKEN_TYPES_LIST"
+    "TokenTypes"
 ]
