@@ -1,25 +1,43 @@
 import re
-
 from .Token import Token
 from .TokenType import TOKEN_TYPES_LIST
+from .TokenType import TokenType
+from typing import Optional, List, Dict
+
+
+class FileManager:
+    @staticmethod
+    def get_code(filepath: str) -> str:
+        code: str = ''
+        with open(filepath, 'r', encoding='utf-8') as file:
+            codelines = file.readlines()
+        code = ''.join(codelines)
+        return code
+
+    @staticmethod
+    def create_file(filepath: str, data: List[str]) -> None:
+        with open(filepath, 'w') as file:
+            for line in data:
+                file.write(line)
 
 
 class Lexer:
 
-    def __init__(self, inpt):
+    def __init__(self, *, code: Optional[str]):
         """
-        inpt: str - code in Pascal
+        code: str - code in Pascal
         """
-        self.__input = inpt
-        self.__input_len = len(inpt)
+        assert isinstance(code, str)
+        self.__input = code
+        self.__input_len = len(code)
 
         self.__line = 0
         self.__pos = 0
         self.__relative_pos = 0
 
-        self.__tokens = []
+        self.__tokens: List[Dict[str, TokenType]] = []
 
-    def __increment_pos(self, inc=1):
+    def __increment_pos(self, inc: int = 1):
         self.__pos += inc
         self.__relative_pos += inc
 
@@ -32,7 +50,7 @@ class Lexer:
             yield token
             token = self.__next_token()
 
-    def __next_token(self):
+    def __next_token(self) -> Optional[Token]:
         """Return next token and move pointers"""
         if self.__pos >= self.__input_len:
             return None
@@ -43,7 +61,7 @@ class Lexer:
         # part of the input is analyzing now
         text = self.__input[self.__pos:]
 
-        possible_tokens = []
+        possible_tokens: List[Token] = []
 
         # find posiible tokens
         for token_type in TOKEN_TYPES_LIST.values():
