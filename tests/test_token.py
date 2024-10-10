@@ -1,5 +1,4 @@
 # flake8: noqa: F401
-# import pytest
 import sys
 import os
 
