@@ -97,8 +97,10 @@ class Lexer:
         """Actions before find token"""
         self.__increment_pos(len(token.string))
 
-        if token.token_type == TokenTypes.NEWLINE:
-            self.__line += 1
+        if token.token_type in (
+            TokenTypes.MULTI_LINE_COMMENT, TokenTypes.NEWLINE
+        ):
+            self.__line += token.string.count('\n')
             self.__relative_pos = 0
 
         # finding errors
