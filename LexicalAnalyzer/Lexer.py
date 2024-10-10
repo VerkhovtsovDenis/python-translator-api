@@ -51,7 +51,6 @@ class Lexer:
             result = re.match(regex, text, flags=re.I)
 
             if result:
-                print(f"Matched token: {token_type}, value: {result.group(1)}")
 
                 string = result.group(0)
                 value = result.group(1)
@@ -74,6 +73,8 @@ class Lexer:
         # so need find the longest of them
 
         token = max(possible_tokens, key=lambda x: len(x.string))
+        print(f"Matched token: {token.token_type}, value: {token.value}")
+
         return token
 
     def __preprocess(self):
