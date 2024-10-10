@@ -51,7 +51,6 @@ class Lexer:
             result = re.match(regex, text, flags=re.I)
 
             if result:
-
                 string = result.group(0)
                 value = result.group(1)
                 token = Token(token_type=token_type,
@@ -79,6 +78,9 @@ class Lexer:
 
     def __preprocess(self):
         """Move the pointer to last whitespace character"""
+        # FIXME не работает next_pos += 1 на многострочных комментариях\
+        # тест tests/test_lexer.py::test_get_lexem_2pas
+
         if self.__input[self.__pos] not in (' ', '\t'):
             return
 

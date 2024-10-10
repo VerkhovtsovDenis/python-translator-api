@@ -36,7 +36,9 @@ class TokenTypes(Enum):
     ARRAY = TokenType('array', r'(ARRAY)')
 
     WRITELN = TokenType('writeln', r'(Writeln)')
+    WRITE = TokenType('write', r'(Write)')
     READLN = TokenType('readln', r'(Readln)')
+    READ = TokenType('read', r'(Read)')
 
     IF = TokenType('if', r'(If)')
     THEN = TokenType('then', r'(Then)')
