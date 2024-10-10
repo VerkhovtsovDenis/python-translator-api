@@ -18,4 +18,5 @@ class Token:
                 f' in line: {self.line+1}, pos: {self.pos+1}')
 
     def __repr__(self):
-        return f"<Token(value={self.value}, regex={self.token_type})>"
+        return f"<Token(value={self.value}, regex={self.token_type}, \
+line={self.line}, pos={self.pos})>"
