@@ -2,12 +2,13 @@
 from .Lexer import *
 from .Token import *
 from .TokenType import *
+from .FileManager import *
 
 
 __all__ = [
     "Lexer",
-    "FileManager",
     "Token", 
     "TokenType", 
     "TokenTypes"
+    "FileManager",
 ]
