@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from LexicalAnalyzer import Lexer, FileManager, TokenTypes
 
 def not_main():
-    path = r'C:\python\python-translator\tests\lexer_code\0.pas'
+    path = r'\tests\lexer_code\0.pas'
     tokens_lines = FileManager.get_code(path)
     
     global tokens

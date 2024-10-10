@@ -15,6 +15,6 @@ def parse_programm(programm):
 
 
 if __name__ == "__main__":
-    path = r'C:\python\python-translator\tests\lexer_code\1.pas'
-    code = FileManager.get_code(filepath=path)
+    path = r'\tests\lexer_code\1.pas'
+    code = FileManager.get_code(relative_path=path)
     parse_programm(code)
