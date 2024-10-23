@@ -113,6 +113,7 @@ class Lexer:
         elif token.token_type == TokenTypes.ID:
             self.__check_id_token(token)
 
+
     def __check_number_integer_token(self, token):
         pass
 

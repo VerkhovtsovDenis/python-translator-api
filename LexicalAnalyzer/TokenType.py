@@ -1,3 +1,4 @@
+
 from enum import Enum
 
 
@@ -9,9 +10,14 @@ class TokenType:
     def __str__(self):
         return self.name
 
+
     def __repr__(self):
         return f"<TokenType(name={self.name}, regex={self.regex})>"
 
+# regular expressions can create in any case
+# it ignore in Lexer
+# token string must be in the 0 group
+# token value must be in the 1 group
 
 class TokenTypes(Enum):
     # delimeters
