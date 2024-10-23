@@ -1,4 +1,5 @@
-from collections import namedtuple
+
+from enum import Enum
 
 
 class TokenType:
@@ -6,92 +7,98 @@ class TokenType:
         self.name = name
         self.regex = regex
 
+    def __str__(self):
+        return self.name
+
+
+    def __repr__(self):
+        return f"<TokenType(name={self.name}, regex={self.regex})>"
 
 # regular expressions can create in any case
 # it ignore in Lexer
 # token string must be in the 0 group
 # token value must be in the 1 group
 
-
-# preference is always given to the longest occurrence
-# if length is equal, preference is given tofirst in TOKEN_TYPES_LIST
-
-TOKEN_TYPES = [
+class TokenTypes(Enum):
     # delimeters
-    TokenType('whitesapce_token', r'( )'),
-    TokenType('tabulation_token', r'(\t)'),
-    TokenType('newline_token', r'(\n)'),
-    TokenType('semicolon_token', r'(;)'),
-    TokenType('colon_token', r'(:)'),
-    TokenType('dot_token', r'(\.)'),
-    TokenType('comma_token', r'(,)'),
-    TokenType('left_bracket_token', r'(\()'),
-    TokenType('right_bracket_token', r'(\))'),
+    COLON = TokenType('colon', r'(:)')
+    DOT = TokenType('dot', r'(\.)')
+    COMMA = TokenType('comma', r'(,)')
+    LEFT_BRACKET = TokenType('left_bracket', r'(\()')
+    RIGHT_BRACKET = TokenType('right_bracket', r'(\))')
+    WHITESPACE = TokenType('whitespace', r'( )')
+    TABULATION = TokenType('tabulation', r'(\t)')
+    NEWLINE = TokenType('newline', r'(\n)')
+    SEMICOLON = TokenType('semicolon', r'(;)')
 
     # keywords
-    TokenType('begin_token', r'(Begin)'),
-    TokenType('end_token', r'(End)'),
-    TokenType('program_token', r'(Program)'),
-    TokenType('const_token', r'(Const)'),
-    TokenType('var_token', r'(Var)'),
-    TokenType('function_token', r'(FUNCTION)'),
-    TokenType('procedure_token', r'(PROCEDURE)'),
-    TokenType('array_token', r'(ARRAY)'),
+    BEGIN = TokenType('begin', r'(Begin)')
+    END = TokenType('end', r'(End)')
+    PROGRAM = TokenType('program', r'(Program)')
+    CONST = TokenType('const', r'(Const)')
+    VAR = TokenType('var', r'(Var)')
+    FUNCTION = TokenType('function', r'(FUNCTION)')
+    PROCEDURE = TokenType('procedure', r'(PROCEDURE)')
+    ARRAY = TokenType('array', r'(ARRAY)')
 
-    TokenType('writeln_token', r'(Writeln)'),
-    TokenType('readln_token', r'(Readln)'),
+    WRITELN = TokenType('writeln', r'(Writeln)')
+    WRITE = TokenType('write', r'(Write)')
+    READLN = TokenType('readln', r'(Readln)')
+    READ = TokenType('read', r'(Read)')
 
-    TokenType('if_token', r'(If)'),
-    TokenType('then_token', r'(Then)'),
-    TokenType('else_token', r'(Else)'),
+    IF = TokenType('if', r'(If)')
+    THEN = TokenType('then', r'(Then)')
+    ELSE = TokenType('else', r'(Else)')
 
-    TokenType('for_token', r'(For)'),
-    TokenType('while_token', r'(While)'),
-    TokenType('to_token', r'(To)'),
-    TokenType('do_token', r'(Do)'),
+    FOR = TokenType('for', r'(For)')
+    WHILE = TokenType('while', r'(While)')
+    TO = TokenType('to', r'(To)')
+    DO = TokenType('do', r'(Do)')
 
-    TokenType('true_token', r'(True)'),
-    TokenType('false_token', r'(False)'),
+    TRUE = TokenType('true', r'(True)')
+    FALSE = TokenType('false', r'(False)')
 
     # data types
-    TokenType('integer_type_token', r'(Integer)'),
-    TokenType('real_type_token', r'(Real)'),
+    INTEGER_TYPE = TokenType('integer_type', r'(Integer)')
+    REAL_TYPE = TokenType('real_type', r'(Real)')
 
-    TokenType('string_type_token', r'(String)'),
-    TokenType('char_type_token', r'(Char)'),
+    STRING_TYPE = TokenType('string_type', r'(String)')
+    CHAR_TYPE = TokenType('char_type', r'(Char)')
 
-    TokenType('boolean_type_token', r'(Boolean)'),
+    BOOLEAN_TYPE = TokenType('boolean_type', r'(Boolean)')
 
     # operators
-    TokenType('plus_token', r'(\+)'),
-    TokenType('minus_token', r'(-)'),
-    TokenType('multiply_token', r'(\*)'),
-    TokenType('division_token', r'(\))'),
-    TokenType('div_token', r'(div)'),
-    TokenType('mod_token', r'(mod)'),
+    PLUS = TokenType('plus', r'(\+)')
+    MINUS = TokenType('minus', r'(-)')
+    MULTIPLY = TokenType('multiply', r'(\*)')
+    DIVISION = TokenType('division', r'(\/)')
+    DIV = TokenType('div', r'(div)')
+    MOD = TokenType('mod', r'(mod)')
 
-    TokenType('assignment_token', r'(:=)'),
+    ASSIGNMENT = TokenType('assignment', r'(:=)')
 
-    TokenType('equal_token', r'(=)'),
-    TokenType('not_equal_token', r'(<>)'),
-    TokenType('less_than_token', r'(<)'),
-    TokenType('greater_than_token', r'(>)'),
-    TokenType('less_than_or_equal_token', r'(<=)'),
-    TokenType('greater_than_or_equal_token', r'(>=)'),
+    EQUAL = TokenType('equal', r'(=)')
+    NOT_EQUAL = TokenType('not_equal', r'(<>)')
+    LESS_THAN = TokenType('less_than', r'(<)')
+    GREATER_THAN = TokenType('greater_than', r'(>)')
+    LESS_THAN_OR_EQUAL = TokenType('less_than_or_equal', r'(<=)')
+    GREATER_THAN_OR_EQUAL = TokenType('greater_than_or_equal', r'(>=)')
 
-    TokenType('and_token', r'(And)'),
-    TokenType('or_token', r'(Or)'),
-    TokenType('not_token', r'(Not)'),
+    AND = TokenType('and', r'(And)')
+    OR = TokenType('or', r'(Or)')
+    NOT = TokenType('not', r'(Not)')
 
     # ids
-    TokenType('number_integer_token', r'(\d+)'),
-    TokenType('number_real_token', r'(\d+\.\d+)'),
-    TokenType('string_token', r"'(.*)'"),
-    TokenType('id_token', r'([a-zA-Z_]\w*)'),
-    TokenType('single_line_comment_token', r'\/\/(.*\n)'),
-    TokenType('multi_line_comment_token', r'\{([^{}]*)\}'),
-]
+    NUMBER_INTEGER = TokenType('number_integer', r'(\d+)')
+    NUMBER_REAL = TokenType('number_real', r'(\d+\.\d+)')
+    STRING = TokenType('string', r"'(.*)'")
+    ID = TokenType('id', r'([a-zA-Z_]\w*)')
+    SINGLE_LINE_COMMENT = TokenType('single_line_comment', r'\/\/(.*\n)')
+    MULTI_LINE_COMMENT = TokenType('multi_line_comment', r'\{([^{}]*)\}')
 
-Tokens = namedtuple('Tokens', list(map(lambda x: x.name, TOKEN_TYPES)))
+    def __str__(self):
+        return str(self.value.name)  # При вызове str(TokenTypes.WHITESPACE)
+        # будет возвращено 'whitespace'
 
-TOKEN_TYPES_LIST = Tokens(*TOKEN_TYPES)
+    # def __getattr__(self, attr):
+    #     return getattr(self.value, attr)

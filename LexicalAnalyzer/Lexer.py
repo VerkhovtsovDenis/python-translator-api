@@ -1,22 +1,26 @@
 import re
-
 from .Token import Token
-from .TokenType import TOKEN_TYPES_LIST
+from .TokenType import TokenType, TokenTypes
+from typing import Optional, List, Dict
 
 
 class Lexer:
 
-    def __init__(self, inpt):
-        self.__input = inpt
-        self.__input_len = len(inpt)
+    def __init__(self, *, code: Optional[str]):
+        """
+        code: str - code in Pascal
+        """
+        assert isinstance(code, str)
+        self.__input = code
+        self.__input_len = len(code)
 
         self.__line = 0
         self.__pos = 0
         self.__relative_pos = 0
 
-        self.__tokens = []
+        self.__tokens: List[Dict[str, TokenType]] = []
 
-    def __increment_pos(self, inc=1):
+    def __increment_pos(self, inc: int = 1):
         self.__pos += inc
         self.__relative_pos += inc
 
@@ -29,22 +33,21 @@ class Lexer:
             yield token
             token = self.__next_token()
 
-    def __next_token(self):
+    def __next_token(self) -> Optional[Token]:
         """Return next token and move pointers"""
         if self.__pos >= self.__input_len:
             return None
 
-        # first, need ignore double spaces
         self.__preprocess()
 
         # part of the input is analyzing now
         text = self.__input[self.__pos:]
 
-        possible_tokens = []
+        possible_tokens: List[Token] = []
 
         # find posiible tokens
-        for token_type in TOKEN_TYPES_LIST:
-            regex = token_type.regex
+        for token_type in TokenTypes:
+            regex = token_type.value.regex
             result = re.match(regex, text, flags=re.I)
 
             if result:
@@ -69,10 +72,15 @@ class Lexer:
         # so need find the longest of them
 
         token = max(possible_tokens, key=lambda x: len(x.string))
+        print(f"Matched token: {token.token_type}, value: {token.value}")
+
         return token
 
     def __preprocess(self):
         """Move the pointer to last whitespace character"""
+        # FIXME не работает next_pos += 1 на многострочных комментариях\
+        # тест tests/test_lexer.py::test_get_lexem_2pas
+
         if self.__input[self.__pos] not in (' ', '\t'):
             return
 
@@ -89,23 +97,22 @@ class Lexer:
         """Actions before find token"""
         self.__increment_pos(len(token.string))
 
-        if token.token_type == TOKEN_TYPES_LIST.newline_token:
-            self.__line += 1
+        if token.token_type in (
+            TokenTypes.MULTI_LINE_COMMENT, TokenTypes.NEWLINE
+        ):
+            self.__line += token.string.count('\n')
             self.__relative_pos = 0
 
         # finding errors
-        match token.token_type:
-            case TOKEN_TYPES_LIST.number_integer_token:
-                self.__check_number_integer_token(token)
+        elif token.token_type == TokenTypes.NUMBER_INTEGER:
+            self.__check_number_integer_token(token)
+        elif token.token_type == TokenTypes.NUMBER_REAL:
+            self.__check_number_real_token(token)
+        elif token.token_type == TokenTypes.STRING:
+            self.__check_string_token(token)
+        elif token.token_type == TokenTypes.ID:
+            self.__check_id_token(token)
 
-            case TOKEN_TYPES_LIST.number_real_token:
-                self.__check_number_real_token(token)
-
-            case TOKEN_TYPES_LIST.string_token:
-                self.__check_string_token(token)
-
-            case TOKEN_TYPES_LIST.id_token:
-                self.__check_id_token(token)
 
     def __check_number_integer_token(self, token):
         pass
