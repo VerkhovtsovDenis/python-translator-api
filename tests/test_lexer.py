@@ -1,9 +1,15 @@
 # flake8: noqa: F401
 import os
 import sys
+import pytest
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from LexicalAnalyzer import Lexer, FileManager, TokenTypes
+from LexicalAnalyzer import InvalidNumberFormatError,\
+                            UnexpectedTokenSequenceError,\
+                            InvalidRealNumberFormatError,\
+                            UnmatchedParenthesisError,\
+                            UnclosedStringLiteralError
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 def test_can_lexer_init():
     path = r'\tests\lexer_code\1.pas'
@@ -154,9 +160,50 @@ def test_get_lexem_2pas():
         else:
             # Проверить код 
             assert token.token_type == corrett_token_type
+            
+@pytest.mark.xfail
+def test_get_lexem_3pas():
+    path = r'\tests\lexer_code\3.pas'
+    pascal_code = FileManager.get_code(path)
 
+    with pytest.raises(InvalidNumberFormatError):
+        list(Lexer(code=pascal_code).tokenize())
+        
+        
+@pytest.mark.xfail
+def test_get_lexem_4pas():
+    path = r'\tests\lexer_code\4.pas'
+    pascal_code = FileManager.get_code(path)
 
+    with pytest.raises(UnexpectedTokenSequenceError):
+        list(Lexer(code=pascal_code).tokenize())
+        
+        
+@pytest.mark.xfail
+def test_get_lexem_5pas():
+    path = r'\tests\lexer_code\5.pas'
+    pascal_code = FileManager.get_code(path)
+
+    with pytest.raises(InvalidRealNumberFormatError):
+        list(Lexer(code=pascal_code).tokenize())
+        
+        
+@pytest.mark.xfail
+def test_get_lexem_6pas():
+    path = r'\tests\lexer_code\6.pas'
+    pascal_code = FileManager.get_code(path)
+
+    with pytest.raises(UnmatchedParenthesisError):
+        list(Lexer(code=pascal_code).tokenize())
+        
+        
+@pytest.mark.xfail
+def test_get_lexem_7pas():
+    path = r'\tests\lexer_code\7.pas'
+    pascal_code = FileManager.get_code(path)
+
+    with pytest.raises(UnclosedStringLiteralError):
+        list(Lexer(code=pascal_code).tokenize())
 
 if __name__ == "__main__":
     test_get_lexem_2pas()
-    
