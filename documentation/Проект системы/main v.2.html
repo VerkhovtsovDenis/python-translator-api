@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Стили для консоли */
+        .console {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-y: auto;
+            height: 150px;
+        }
+        .console .info {
+            color: #9cdcfe; /* Синий */
+        }
+        .console .error {
+            color: #f44747; /* Красный */
+        }
+        .console .success {
+            color: #608b4e; /* Зеленый */
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Лого ДВФУ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="#">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Мои программы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">О нас</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Контент -->
+    <div class="container mt-5">
+        <h1 class="text-center">Преобразуйте Pascal в Python</h1>
+        <div class="row mt-4">
+            <!-- Блок ввода кода -->
+            <div class="col-md-6">
+                <textarea class="form-control" rows="10" placeholder="Введите ваш код на Pascal..."></textarea>
+            </div>
+            <!-- Блок Drag and Drop -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center border border-dashed border-secondary rounded" style="height: 250px;">
+                <div class="text-center">
+                    <p class="mb-2">Перетащите сюда файлы</p>
+                    <button class="btn btn-outline-secondary">Или выберите файлы</button>
+                </div>
+            </div>
+        </div>
+        <!-- Кнопки -->
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <button class="btn btn-outline-secondary">Копировать</button>
+            <button class="btn btn-primary">Конвертировать</button>
+            <button class="btn btn-outline-secondary">Увеличить редактор</button>
+        </div>
+        <!-- Консоль -->
+        <div class="mt-4">
+            <h5>Вывод компилятора:</h5>
+            <div class="console">
+                <div class="info">INFO: Запуск компиляции...</div>
+                <div class="error">ERROR: Синтаксическая ошибка в строке 5</div>
+                <div class="success">SUCCESS: Компиляция завершена успешно.</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5">
+        <p>© 2022-2024 Recruitize Pty Ltd. All</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
