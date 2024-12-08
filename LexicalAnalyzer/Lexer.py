@@ -72,7 +72,7 @@ class Lexer:
         # so need find the longest of them
 
         token = max(possible_tokens, key=lambda x: len(x.string))
-        print(f"Matched token: {token.token_type}, value: {token.value}")
+        # print(f"Matched token: {token.token_type}, value: {token.value}")
 
         return token
 
