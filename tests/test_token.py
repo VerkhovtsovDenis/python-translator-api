@@ -2,15 +2,17 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from LexicalAnalyzer import Lexer, FileManager, TokenTypes
 
+
 def not_main():
-    path = r'\tests\lexer_code\0.pas'
+    path = r"\tests\lexer_code\0.pas"
     tokens_lines = FileManager.get_code(path)
-    
+
     global tokens
     tokens = list(Lexer(code=tokens_lines).tokenize())
+
 
 def test_delimeters():
     delimeters_tokens = tokens[0:8]
@@ -26,6 +28,7 @@ def test_delimeters():
     # assert delimeters_tokens[6].token_type == TokenTypes.WHITESPACE
     assert delimeters_tokens[6].token_type == TokenTypes.TABULATION
     assert delimeters_tokens[7].token_type == TokenTypes.NEWLINE
+
 
 def test_keywords():
     delimeters_tokens = tokens[8:46:2]
@@ -49,6 +52,7 @@ def test_keywords():
     assert delimeters_tokens[17].token_type == TokenTypes.TRUE
     assert delimeters_tokens[18].token_type == TokenTypes.FALSE
 
+
 def test_types():
     delimeters_tokens = tokens[46:56:2]
     assert delimeters_tokens[0].token_type == TokenTypes.INTEGER_TYPE
@@ -56,6 +60,7 @@ def test_types():
     assert delimeters_tokens[2].token_type == TokenTypes.STRING_TYPE
     assert delimeters_tokens[3].token_type == TokenTypes.CHAR_TYPE
     assert delimeters_tokens[4].token_type == TokenTypes.BOOLEAN_TYPE
+
 
 def test_operators():
     delimeters_tokens = tokens[56:88:2]
@@ -86,10 +91,11 @@ def test_ids():
     assert delimeters_tokens[4].token_type == TokenTypes.MULTI_LINE_COMMENT
     assert delimeters_tokens[5].token_type == TokenTypes.SINGLE_LINE_COMMENT
 
+
 if __name__ == "__main__":
     tokens = list(Lexer(code="192.12 ").tokenize())
     print(tokens)
     assert tokens[0].token_type == TokenTypes.NUMBER_REAL
-    
+
 else:
     not_main()

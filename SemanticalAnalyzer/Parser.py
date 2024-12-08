@@ -4,32 +4,31 @@ from .AST import (
     NumberNode,
     VariableNode,
     BinaryOperatorNode,
-    UnarOperatorNode
+    UnarOperatorNode,
 )
 from LexicalAnalyzer import Token, TokenType, TokenTypes
 
 
 class Parser:
     """Класс парсера"""
-    
+
     KEY_WORDS_TOKENS = (
-        TokenTypes.BEGIN, 
+        TokenTypes.BEGIN,
         TokenTypes.END,
         TokenTypes.PROGRAM,
         TokenTypes.CONST,
         TokenTypes.VAR,
         TokenTypes.FUNCTION,
         TokenTypes.PROCEDURE,
-        TokenTypes.ARRAY
+        TokenTypes.ARRAY,
     )
-    
+
     NUMBERS_TOKENS = (
-        TokenTypes.NUMBER_INTEGER, 
+        TokenTypes.NUMBER_INTEGER,
         TokenTypes.NUMBER_REAL,
         TokenTypes.STRING,
     )
-    
-    
+
     OPERATORS = (
         TokenTypes.EQUAL,
         TokenTypes.NOT_EQUAL,
@@ -45,13 +44,12 @@ class Parser:
         TokenTypes.DIV,
         # other logical and, or, not
     )
-    
+
     def __init__(self, tokens: list[Token]):
         self.tokens: list[Token] = tokens
         self.pos = 0
 
         self.scope = {}
-    
 
     def match(self, *expected_tokens_type: list[TokenType]) -> Token | None:
         """
@@ -65,12 +63,10 @@ class Parser:
         """
         if self.pos < len(self.tokens):
             curent_token = self.tokens[self.pos]
-            
+
             if curent_token.token_type in expected_tokens_type:
-                self.pos +=1
+                self.pos += 1
                 return curent_token
-
-
 
     def require(self, expected_tokens_type: list[TokenType]) -> Token:
         """
@@ -84,24 +80,24 @@ class Parser:
         """
         token = self.match(expected_tokens_type=expected_tokens_type)
         if not token:
-            raise ValueError(f"на позщиции {self.pos} ожидается токен из {expected_tokens_type}")
+            raise ValueError(
+                f"на позщиции {self.pos} ожидается токен из {expected_tokens_type}"
+            )
 
         return token
-    
-    
+
     def parse_variable_or_number(self):
         number_token = self.match(expected_tokens_type=self.NUMBERS_TOKENS)
         if number_token:
             return NumberNode(number_token)
 
         varible_token = self.match(TokenTypes.ID)
-        
+
         if varible_token:
             return VariableNode(varible_token)
-        
+
         raise ValueError("Ожидалось число или идентификатор")
-    
-    
+
     def parse_parentheses(self) -> ExpressionNode:
         """Парсит выражение в скобках"""
         if self.match(TokenTypes.LEFT_BRACKET):
@@ -110,7 +106,6 @@ class Parser:
             return node
         else:
             return self.parse_variable_or_number()
-
 
     def parse_formula(self) -> ExpressionNode:
         """парсит математическое выражение"""
@@ -123,7 +118,7 @@ class Parser:
             operator_token = self.math(expected_tokens_type=self.OPERATORS)
 
         return left_node
-    
+
     def parse_expression(self):
         """Парсит одно вырпжение"""
         if self.match(expected_tokens_type=self.KEY_WORDS_TOKENS):
@@ -137,23 +132,24 @@ class Parser:
             if assign_operator_token:
                 right_operand_token = self.parse_formula()
                 left_operand_token = id_node
-                binary_operator_node = BinaryOperatorNode(assign_operator_token, left_operand_token, right_operand_token)
+                binary_operator_node = BinaryOperatorNode(
+                    assign_operator_token, left_operand_token, right_operand_token
+                )
                 return binary_operator_node
-        raise ValueError('lexic error')
-    
-    
+        raise ValueError("lexic error")
+
     def parse_writeln(self) -> ExpressionNode:
-        writeln_token = self.match(expected_tokens_type=TokenTypes.WRITELN)        
+        writeln_token = self.match(expected_tokens_type=TokenTypes.WRITELN)
         if writeln_token:
             operand = self.parse_parentheses()
             return UnarOperatorNode(writeln_token, operand)
         else:
             raise ValueError()
-    
+
     def parse_code(self) -> ExpressionNode:
         """парсит весь код"""
         root = StatementsNode()
-        
+
         while self.pos < len(self.tokens):
             code_string_node = self.parse_expression()
             self.require(expected_tokens_type=TokenTypes.SEMICOLON)

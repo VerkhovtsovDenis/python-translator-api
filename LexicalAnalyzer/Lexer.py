@@ -41,7 +41,7 @@ class Lexer:
         self.__preprocess()
 
         # part of the input is analyzing now
-        text = self.__input[self.__pos:]
+        text = self.__input[self.__pos :]
 
         possible_tokens: List[Token] = []
 
@@ -53,11 +53,13 @@ class Lexer:
             if result:
                 string = result.group(0)
                 value = result.group(1)
-                token = Token(token_type=token_type,
-                              string=string,
-                              value=value,
-                              line=self.__line,
-                              pos=self.__relative_pos)
+                token = Token(
+                    token_type=token_type,
+                    string=string,
+                    value=value,
+                    line=self.__line,
+                    pos=self.__relative_pos,
+                )
                 possible_tokens.append(token)
 
         if not possible_tokens:
@@ -81,13 +83,12 @@ class Lexer:
         # FIXME не работает next_pos += 1 на многострочных комментариях\
         # тест tests/test_lexer.py::test_get_lexem_2pas
 
-        if self.__input[self.__pos] not in (' ', '\t'):
+        if self.__input[self.__pos] not in (" ", "\t"):
             return
 
         next_pos = self.__pos + 1
 
-        while (next_pos < self.__input_len
-               and self.__input[next_pos] in (' ', '\t')):
+        while next_pos < self.__input_len and self.__input[next_pos] in (" ", "\t"):
             next_pos += 1
 
         inc = next_pos - self.__pos - 1
@@ -97,10 +98,8 @@ class Lexer:
         """Actions before find token"""
         self.__increment_pos(len(token.string))
 
-        if token.token_type in (
-            TokenTypes.MULTI_LINE_COMMENT, TokenTypes.NEWLINE
-        ):
-            self.__line += token.string.count('\n')
+        if token.token_type in (TokenTypes.MULTI_LINE_COMMENT, TokenTypes.NEWLINE):
+            self.__line += token.string.count("\n")
             self.__relative_pos = 0
 
         # finding errors
@@ -112,7 +111,6 @@ class Lexer:
             self.__check_string_token(token)
         elif token.token_type == TokenTypes.ID:
             self.__check_id_token(token)
-
 
     def __check_number_integer_token(self, token):
         pass
@@ -133,4 +131,4 @@ class UnknownTokenException(Exception):
         self.pos = pos
 
     def __str__(self):
-        return f'Unknow token on line: {self.line}, pos: {self.pos}'
+        return f"Unknow token on line: {self.line}, pos: {self.pos}"
