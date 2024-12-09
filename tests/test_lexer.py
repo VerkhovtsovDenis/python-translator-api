@@ -3,7 +3,7 @@ import os
 import sys
 import pytest
 
-from LexicalAnalyzer import Lexer, FileManager, TokenTypes
+from LexicalAnalyzer import Lexer, TokenTypes
 from LexicalAnalyzer import (
     InvalidNumberFormatError,
     UnexpectedTokenSequenceError,
@@ -11,6 +11,7 @@ from LexicalAnalyzer import (
     UnmatchedParenthesisError,
     UnclosedStringLiteralError,
 )
+from FileManager import FileManager
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 

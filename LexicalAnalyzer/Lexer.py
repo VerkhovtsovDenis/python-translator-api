@@ -41,7 +41,7 @@ class Lexer:
         self.__preprocess()
 
         # part of the input is analyzing now
-        text = self.__input[self.__pos :]
+        text = self.__input[self.__pos : len(self.__input)]
 
         possible_tokens: List[Token] = []
 

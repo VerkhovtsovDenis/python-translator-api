@@ -53,7 +53,8 @@ class Parser:
 
     def match(self, *expected_tokens_type: list[TokenType]) -> Token | None:
         """
-        Получение токена по его номеру в последовательности токенов. если токен входит в множество допустимых токенов.
+        Получение токена по его номеру в последовательности токенов,
+        если токен входит в множество допустимых токенов.
 
         Args:
             expected_tokens_type (list[TokenType]): множество допустимых токенов.
@@ -70,7 +71,8 @@ class Parser:
 
     def require(self, expected_tokens_type: list[TokenType]) -> Token:
         """
-        Требует что бы по self.pos был токен из переданного множества токенов иниче вызывает исключение
+        Требует что бы по self.pos был токен из переданного множества токенов,
+        иначе вызывает исключение
         Args:
             expected_tokens_type (list[TokenType]): множество допустимых токенов.
 

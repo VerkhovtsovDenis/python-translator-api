@@ -3,7 +3,8 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from LexicalAnalyzer import Lexer, FileManager, TokenTypes
+from LexicalAnalyzer import Lexer, TokenTypes
+from FileManager import FileManager
 
 
 def not_main():

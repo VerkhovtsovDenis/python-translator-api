@@ -12,8 +12,8 @@ def parse_programm(programm):
     print("--------\n")
     print("Tokens:")
 
-    # for token in lexer.tokenize():
-    #     print(token)
+    for token in lexer.tokenize():
+        print(token)
 
     parser = Parser(list(lexer.tokenize()))
 
