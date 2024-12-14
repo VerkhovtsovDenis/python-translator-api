@@ -1,13 +1,11 @@
 from typing import Any
 from LexicalAnalyzer import TokenType, TokenTypes
-from .Erorrs import LexicalError
+from .Erorrs import SemanticError
 
 
 class BaseDataType:
     """Базовый класс для типов данных."""
-
-    def __init__(self, token_type: TokenType):
-        self.token_type = token_type
+    token_type: TokenType = None
 
     def check_value(self, value: Any) -> bool:
         """
@@ -18,12 +16,11 @@ class BaseDataType:
         Raises:
             NotImplementedError: Метод не реализован.
         """
-        raise LexicalError
+        raise SemanticError
 
 
-class IntegerDateType(BaseDataType):
-    def __init__(self):
-        super.__init__(token_type=TokenTypes.INTEGER_TYPE)
+class IntegerDataType(BaseDataType):
+    token_type = TokenTypes.INTEGER_TYPE
 
     def check_value(self, value):
         try:
@@ -33,9 +30,8 @@ class IntegerDateType(BaseDataType):
             return False
 
 
-class RealDateType(BaseDataType):
-    def __init__(self):
-        super.__init__(token_type=TokenTypes.REAL_TYPE)
+class RealDataType(BaseDataType):
+    token_type = TokenTypes.REAL_TYPE
 
     def check_value(self, value):
         try:
@@ -45,9 +41,8 @@ class RealDateType(BaseDataType):
             return False
 
 
-class StringDateType(BaseDataType):
-    def __init__(self):
-        super.__init__(token_type=TokenTypes.STRING_TYPE)
+class StringDataType(BaseDataType):
+    token_type = TokenTypes.STRING_TYPE
 
     def check_value(self, value):
         try:
@@ -57,9 +52,8 @@ class StringDateType(BaseDataType):
             return False
 
 
-class CharDateType(BaseDataType):
-    def __init__(self):
-        super.__init__(token_type=TokenTypes.CHAR_TYPE)
+class CharDataType(BaseDataType):
+    token_type = TokenTypes.CHAR_TYPE
 
     def check_value(self, value):
         try:
@@ -70,8 +64,7 @@ class CharDateType(BaseDataType):
 
 
 class BooleanDateType(BaseDataType):
-    def __init__(self):
-        super.__init__(token_type=TokenTypes.BOOLEAN_TYPE)
+    token_type = TokenTypes.BOOLEAN_TYPE
 
     def check_value(self, value):
         try:
@@ -82,10 +75,10 @@ class BooleanDateType(BaseDataType):
 
 
 TOKEN_TYPE_TO_DATA_TYPE_MAP = {
-    TokenTypes.INTEGER_TYPE: IntegerDateType,
-    TokenTypes.REAL_TYPE: RealDateType,
-    TokenTypes.STRING: StringDateType,
-    TokenTypes.CHAR_TYPE: CharDateType,
+    TokenTypes.INTEGER_TYPE: IntegerDataType,
+    TokenTypes.REAL_TYPE: RealDataType,
+    TokenTypes.STRING_TYPE: StringDataType,
+    TokenTypes.CHAR_TYPE: CharDataType,
     TokenTypes.BOOLEAN_TYPE: BooleanDateType,
 }
 
@@ -107,3 +100,10 @@ class Variable:
 
     def __repr__(self):
         return self.__str__()
+
+    def __eq__(self, value):
+        return (
+            isinstance(value, Variable)
+            and self.name == value.name
+            and self.data_type == value.data_type
+        )

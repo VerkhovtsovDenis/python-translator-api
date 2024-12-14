@@ -12,18 +12,19 @@ def parse_programm(programm):
     print("--------\n")
     print("Tokens:")
 
-    [print(token) for token in lexer.tokenize()]
-
     parser = Parser(lexer.tokenize())
-
-    # tree = parser.parse_code()
-    # print(tree)
+    parser.parse_code()
 
 
 if __name__ == "__main__":
     # path = r"\tests\lexer_code\1.pas"
     # code = FileManager.get_code(relative_path=path)
     code = """
-    123f
+    var
+        a: integer;
+        a: integer;
+    begin
+        B:=12+3;
+    end.
     """
     parse_programm(code)

@@ -1,4 +1,5 @@
 from typing import Generator
+
 from .AST import (
     ExpressionNode,
     StatementsNode,
@@ -8,6 +9,10 @@ from .AST import (
     UnarOperatorNode,
 )
 from .Variable import Variable, TOKEN_TYPE_TO_DATA_TYPE_MAP
+from .Erorrs import (
+    SemanticError,
+    REDECARED_ID_MESSEAGE,
+)
 from LexicalAnalyzer import Token, TokenType, TokenTypes
 
 
@@ -195,7 +200,8 @@ class Parser:
         varibales_type = TOKEN_TYPE_TO_DATA_TYPE_MAP[self._current_token.token_type]
 
         for variable_name in variables_names:
-
+            if variable_name in self._global_scope:
+                raise SemanticError(REDECARED_ID_MESSEAGE.format(id=variable_name))
             varibale = Variable(varibales_type, variable_name)
             self._global_scope[variable_name] = varibale
 
@@ -203,14 +209,18 @@ class Parser:
         self._require(TokenTypes.SEMICOLON)
 
     def parse_code(self) -> ExpressionNode:
-        """парсит весь код"""
+        """Парсит весь код."""
+
         root = StatementsNode()
-        self._get_next_token()
+        try:
+            self._get_next_token()
 
-        if self._current_token.token_type == TokenTypes.VAR:
-            self._parse_global_scope()
+            if self._current_token.token_type == TokenTypes.VAR:
+                self._parse_global_scope()
 
-        print(self._global_scope)
+            print(self._global_scope)
+        except StopIteration:
+            print("Парсинг закончен")
 
         # while self.pos < len(self.tokens):
         #     code_string_node = self.parse_expression()
