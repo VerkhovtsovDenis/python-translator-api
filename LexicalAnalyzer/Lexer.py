@@ -1,51 +1,85 @@
 import re
+from typing import Generator
+
+from .Errors import LexicError, INVALID_TOKENS_MESSEAGE, UNKNOW_TOKEN_MESSEAGE
 from .Token import Token
-from .TokenType import TokenType, TokenTypes
-from typing import Optional, List, Dict
+from .TokenType import TokenTypes, OPERATORS, DELIMETERS
 
 
 class Lexer:
+    """
+    Класс лексическкого анализатора, отвечающий за генерацию последовательности токенов
+    и первичный ее анализ.
+    """
 
-    def __init__(self, *, code: Optional[str]):
+    # Типы токенов, которые не будут возвращены
+    UNIMPORTANT_DELIMETERS = (
+        TokenTypes.TABULATION,
+        TokenTypes.NEWLINE,
+        TokenTypes.WHITESPACE,
+    )
+
+    def __init__(self, *, code: str):
         """
-        code: str - code in Pascal
+        Args:
+            code (str): Код входной программы на паскале.
         """
-        assert isinstance(code, str)
-        self.__input = code
-        self.__input_len = len(code)
+        self._input = code
+        self._input_len = len(code)
 
-        self.__line = 0
-        self.__pos = 0
-        self.__relative_pos = 0
+        self._line = 0
+        self._pos = 0  # Абсолютная позиция указателя
+        self._relative_pos = (
+            0  # Позиция указателя, относительно текущей анализируемой строки
+        )
 
-        self.__tokens: List[Dict[str, TokenType]] = []
+    def _increment_pos(self, inc: int = 1):
+        """
+        Инкрементирует абсолютную и относительную позицию указателя.
 
-    def __increment_pos(self, inc: int = 1):
-        self.__pos += inc
-        self.__relative_pos += inc
+        Args:
+            inc (int): Число, на которое нужно инкрементировать указатель.
+        """
+        self._pos += inc
+        self._relative_pos += inc
 
-    def tokenize(self):
-        """Lazy returns tokens"""
-        token = self.__next_token()
+    def tokenize(self) -> Generator[Token, None, None]:
+        """
+        Создает генератор, запускающий процес лексического анализа.
+
+        Returns:
+            Generator[Token, None, None]: Генератор, возвращающий токены.
+
+        Raises:
+            SyntaxError: Синтаксическая ошибка.
+        """
+        token = self._get_next_token()
         while token:
-            self.__postprocess(token)
-            self.__tokens.append(token)
-            yield token
-            token = self.__next_token()
+            self._postprocess(token)
 
-    def __next_token(self) -> Optional[Token]:
-        """Return next token and move pointers"""
-        if self.__pos >= self.__input_len:
+            if token.token_type not in self.UNIMPORTANT_DELIMETERS:
+                yield token
+
+            token = self._get_next_token()
+
+    def _get_next_token(self) -> Token | None:
+        """
+        Возвращает следующий токен и передвигает указатели.
+
+        Returns:
+            Token | None: Следующий токен.
+        """
+        if self._pos >= self._input_len:
             return None
 
-        self.__preprocess()
+        self._preprocess()
 
-        # part of the input is analyzing now
-        text = self.__input[self.__pos : len(self.__input)]
+        # Часть инпута, анализируемая сейчас
+        text = self._input[self._pos : len(self._input)]
 
-        possible_tokens: List[Token] = []
+        possible_tokens: list[Token] = []
 
-        # find posiible tokens
+        # Находит возможные токены
         for token_type in TokenTypes:
             regex = token_type.value.regex
             result = re.match(regex, text, flags=re.I)
@@ -57,78 +91,95 @@ class Lexer:
                     token_type=token_type,
                     string=string,
                     value=value,
-                    line=self.__line,
-                    pos=self.__relative_pos,
+                    line=self._line,
+                    pos=self._relative_pos,
                 )
                 possible_tokens.append(token)
 
         if not possible_tokens:
-            raise UnknownTokenException(self.__line, self.__relative_pos)
+            raise LexicError(
+                UNKNOW_TOKEN_MESSEAGE.format(
+                    code=self._input[self._pos],
+                    line=self._line,
+                    pos=self._pos,
+                )
+            )
 
-        # find max token by value lenngth
-        # it need because one lexem can match with several tokens
+        # За правильный токен, считаем самый длинный из возможных
 
-        # in example lexem 'begin_value'
-        # it match with keyword token 'begin'
-        # and match with id token 'begin_value'
-        # so need find the longest of them
+        # Например последовательность 'begin_value'
+        # Может быть токеном ключевого словом 'begin'
+        # Или токеном идентификатора 'begin_value'
+        # И правильным будет самый длинный токен
 
         token = max(possible_tokens, key=lambda x: len(x.string))
-        # print(f"Matched token: {token.token_type}, value: {token.value}")
 
         return token
 
-    def __preprocess(self):
-        """Move the pointer to last whitespace character"""
-        # FIXME не работает next_pos += 1 на многострочных комментариях\
-        # тест tests/test_lexer.py::test_get_lexem_2pas
+    def _preprocess(self):
+        """перемещает указатель self._pos на последний не пробельный символ."""
 
-        if self.__input[self.__pos] not in (" ", "\t"):
+        # TODO убрать этот метод, т.к пробелы теперь игнорируются
+
+        if self._input[self._pos] not in (" ", "\t"):
             return
 
-        next_pos = self.__pos + 1
+        next_pos = self._pos + 1
 
-        while next_pos < self.__input_len and self.__input[next_pos] in (" ", "\t"):
+        while next_pos < self._input_len and self._input[next_pos] in (" ", "\t"):
             next_pos += 1
 
-        inc = next_pos - self.__pos - 1
-        self.__increment_pos(inc)
+        inc = next_pos - self._pos - 1
+        self._increment_pos(inc)
 
-    def __postprocess(self, token):
-        """Actions before find token"""
-        self.__increment_pos(len(token.string))
+    def _postprocess(self, token: Token):
+        """
+        Логика после нахождения токена. Передвигает указатель.
+        Находит ошибки, связанные с недопустимым расположением токенов.
+
+        Args:
+            token (Token): Токен найденный на текущем шаге анализатора.
+        """
+        # Опасные токены для которых нужно сделать проверку следующего токена
+        # Опытным путем было выявленно, что следующим токеном для них обязан быть
+        # Разделитель, либо оператор
+        DANGEROUS_TOKEN_TYPES = (
+            TokenTypes.NUMBER_INTEGER,
+            TokenTypes.NUMBER_REAL,
+            TokenTypes.STRING,
+            TokenTypes.STRING,
+        )
+
+        self._increment_pos(len(token.string))
 
         if token.token_type in (TokenTypes.MULTI_LINE_COMMENT, TokenTypes.NEWLINE):
-            self.__line += token.string.count("\n")
-            self.__relative_pos = 0
+            self._line += token.string.count("\n")
+            self._relative_pos = 0
 
-        # finding errors
-        elif token.token_type == TokenTypes.NUMBER_INTEGER:
-            self.__check_number_integer_token(token)
-        elif token.token_type == TokenTypes.NUMBER_REAL:
-            self.__check_number_real_token(token)
-        elif token.token_type == TokenTypes.STRING:
-            self.__check_string_token(token)
-        elif token.token_type == TokenTypes.ID:
-            self.__check_id_token(token)
+        # ищем ошибки для опасных токенов
+        if token.token_type in DANGEROUS_TOKEN_TYPES:
+            next_token = self._get_next_token()
+            if next_token.token_type not in OPERATORS + DELIMETERS:
+                raise LexicError(
+                    INVALID_TOKENS_MESSEAGE.format(
+                        code=self._input[
+                            self._pos
+                            - len(token.value) : self._pos
+                            + len(next_token.value)
+                        ],
+                        line=token.line,
+                        pos=token.pos,
+                    )
+                )
 
-    def __check_number_integer_token(self, token):
+    def _check_number_integer_token(self, token):
         pass
 
-    def __check_number_real_token(self, token):
+    def _check_number_real_token(self, token):
         pass
 
-    def __check_string_token(self, token):
+    def _check_string_token(self, token):
         pass
 
-    def __check_id_token(self, token):
+    def _check_id_token(self, token):
         pass
-
-
-class UnknownTokenException(Exception):
-    def __init__(self, line, pos):
-        self.line = line
-        self.pos = pos
-
-    def __str__(self):
-        return f"Unknow token on line: {self.line}, pos: {self.pos}"

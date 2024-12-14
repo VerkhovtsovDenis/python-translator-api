@@ -1,3 +1,4 @@
+from typing import Generator
 from .AST import (
     ExpressionNode,
     StatementsNode,
@@ -6,6 +7,7 @@ from .AST import (
     BinaryOperatorNode,
     UnarOperatorNode,
 )
+from .Variable import Variable, TOKEN_TYPE_TO_DATA_TYPE_MAP
 from LexicalAnalyzer import Token, TokenType, TokenTypes
 
 
@@ -29,7 +31,7 @@ class Parser:
         TokenTypes.STRING,
     )
 
-    OPERATORS = (
+    OPERATORS_TOKENS = (
         TokenTypes.EQUAL,
         TokenTypes.NOT_EQUAL,
         TokenTypes.LESS_THAN,
@@ -45,55 +47,70 @@ class Parser:
         # other logical and, or, not
     )
 
-    def __init__(self, tokens: list[Token]):
-        self.tokens: list[Token] = tokens
-        self.pos = 0
+    DATA_TYPES_TOKENS = (
+        TokenTypes.INTEGER_TYPE,
+        TokenTypes.CHAR_TYPE,
+        TokenTypes.STRING_TYPE,
+        TokenTypes.BOOLEAN_TYPE,
+        TokenTypes.REAL_TYPE,
+    )
 
-        self.scope = {}
+    def __init__(self, tokens_generator: Generator[Token, None, None]):
+        self._tokens_generator = tokens_generator
+        self._current_token = None
+        self._previous_token = None
 
-    def match(self, *expected_tokens_type: list[TokenType]) -> Token | None:
+        self._global_scope: dict[str, Variable] = {}
+
+    def _get_next_token(self):
         """
-        Получение токена по его номеру в последовательности токенов,
-        если токен входит в множество допустимых токенов.
+        Передвигает self._current_token на следующий токен из генератора self._tokens_generator.
 
         Args:
             expected_tokens_type (list[TokenType]): множество допустимых токенов.
 
+        Raises:
+            StopIteration: Если токены в генераторе закончились.
+        """
+        self._previous_token = self._current_token
+        self._current_token = next(self._tokens_generator)
+
+    def _match(self, *expected_tokens_type: tuple[TokenType]) -> bool:
+        """
+        Проверяет, что тип текущего токена входит в множество переднных типов.
+
+        Args:
+            expected_tokens_type (list[TokenType]): множество допустимых типов токенов.
+
         Returns:
-            Token|None: Найденный токен.
+            bool: входит ли тип текущего токена в множество переданных.
         """
-        if self.pos < len(self.tokens):
-            curent_token = self.tokens[self.pos]
+        if self._current_token.token_type in expected_tokens_type:
+            return True
 
-            if curent_token.token_type in expected_tokens_type:
-                self.pos += 1
-                return curent_token
-
-    def require(self, expected_tokens_type: list[TokenType]) -> Token:
+    def _require(self, *expected_tokens_type: tuple[TokenType]):
         """
-        Требует что бы по self.pos был токен из переданного множества токенов,
+        Требует чтобы  был тип текущего токена входил в множество переаднных типов,
         иначе вызывает исключение
         Args:
-            expected_tokens_type (list[TokenType]): множество допустимых токенов.
+            expected_tokens_type (list[TokenType]): множество допустимых типов токенов.
 
-        Returns:
-            Token|None: Найденный токен.
-            // TO DO ПОСМОТРЕТЬ НА РАБОТЕ КАК ОБОЗНАЧАТЬ ЧТО МОЖЕТ БЫТЬ RAISE
+        Raises:
+            ValueError: Dash app required for force init callbacks.
         """
-        token = self.match(expected_tokens_type=expected_tokens_type)
-        if not token:
+
+        if not self._match(*expected_tokens_type):
             raise ValueError(
-                f"на позщиции {self.pos} ожидается токен из {expected_tokens_type}"
+                f"""на позщиции {self._current_token.pos} ожидается токен из {expected_tokens_type}\n
+                а был получен {self._current_token}"""
             )
 
-        return token
-
     def parse_variable_or_number(self):
-        number_token = self.match(expected_tokens_type=self.NUMBERS_TOKENS)
+        number_token = self._match(*self.NUMBERS_TOKENS)
         if number_token:
             return NumberNode(number_token)
 
-        varible_token = self.match(TokenTypes.ID)
+        varible_token = self._match(TokenTypes.ID)
 
         if varible_token:
             return VariableNode(varible_token)
@@ -102,15 +119,15 @@ class Parser:
 
     def parse_parentheses(self) -> ExpressionNode:
         """Парсит выражение в скобках"""
-        if self.match(TokenTypes.LEFT_BRACKET):
+        if self._match(TokenTypes.LEFT_BRACKET):
             node = self.parse_formula()
-            self.require(TokenTypes.RIGHT_BRACKET)
+            self._require(TokenTypes.RIGHT_BRACKET)
             return node
         else:
             return self.parse_variable_or_number()
 
     def parse_formula(self) -> ExpressionNode:
-        """парсит математическое выражение"""
+        """Парсит математическое выражение"""
         left_node = self.parse_parentheses()
         operator_token = self.math(expected_tokens_type=self.OPERATORS)
 
@@ -122,15 +139,15 @@ class Parser:
         return left_node
 
     def parse_expression(self):
-        """Парсит одно вырпжение"""
-        if self.match(expected_tokens_type=self.KEY_WORDS_TOKENS):
+        """Парсит одно выражение"""
+        if self._match(*self.KEY_WORDS_TOKENS):
             key_word_node = self.parse_key_word()
             return key_word_node
 
-        elif self.match(expected_tokens_type=TokenTypes.ID):
+        elif self._match(TokenTypes.ID):
             self.pos -= 1
             id_node = self.parse_id()
-            assign_operator_token = self.match(TokenTypes.ASSIGNMENT)
+            assign_operator_token = self._match(TokenTypes.ASSIGNMENT)
             if assign_operator_token:
                 right_operand_token = self.parse_formula()
                 left_operand_token = id_node
@@ -141,19 +158,62 @@ class Parser:
         raise ValueError("lexic error")
 
     def parse_writeln(self) -> ExpressionNode:
-        writeln_token = self.match(expected_tokens_type=TokenTypes.WRITELN)
+        writeln_token = self._match(TokenTypes.WRITELN)
         if writeln_token:
             operand = self.parse_parentheses()
             return UnarOperatorNode(writeln_token, operand)
         else:
             raise ValueError()
 
+    def _parse_global_scope(self):
+        """Парсит секцию var, когда текущий токен на ключевом слове var"""
+        self._require(TokenTypes.VAR)
+        self._get_next_token()
+
+        while self._match(TokenTypes.ID):
+            self._parse_type_scope()
+            self._get_next_token()
+
+    def _parse_type_scope(self):
+        """Парсит объявление переменных одного из типов данных"""
+        variables_names: list[str] = []
+
+        self._require(TokenTypes.ID)
+        variables_names.append(self._current_token.value)
+        self._get_next_token()
+
+        while not self._match(TokenTypes.COLON):
+            self._require(TokenTypes.COMMA)
+            self._get_next_token()
+            self._require(TokenTypes.ID)
+            variables_names.append(self._current_token.value)
+            self._get_next_token()
+
+        self._get_next_token()
+        self._require(*self.DATA_TYPES_TOKENS)
+
+        varibales_type = TOKEN_TYPE_TO_DATA_TYPE_MAP[self._current_token.token_type]
+
+        for variable_name in variables_names:
+
+            varibale = Variable(varibales_type, variable_name)
+            self._global_scope[variable_name] = varibale
+
+        self._get_next_token()
+        self._require(TokenTypes.SEMICOLON)
+
     def parse_code(self) -> ExpressionNode:
         """парсит весь код"""
         root = StatementsNode()
+        self._get_next_token()
 
-        while self.pos < len(self.tokens):
-            code_string_node = self.parse_expression()
-            self.require(expected_tokens_type=TokenTypes.SEMICOLON)
-            root.add_node(code_string_node)
-        return root
+        if self._current_token.token_type == TokenTypes.VAR:
+            self._parse_global_scope()
+
+        print(self._global_scope)
+
+        # while self.pos < len(self.tokens):
+        #     code_string_node = self.parse_expression()
+        #     self._require(expected_tokens_type=TokenTypes.SEMICOLON)
+        #     root.add_node(code_string_node)
+        # return root

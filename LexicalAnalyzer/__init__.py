@@ -2,11 +2,4 @@
 from .Lexer import Lexer
 from .TokenType import TokenType, TokenTypes
 from .Token import Token
-
-from .Errors import (
-    InvalidNumberFormatError,
-    UnexpectedTokenSequenceError,
-    InvalidRealNumberFormatError,
-    UnmatchedParenthesisError,
-    UnclosedStringLiteralError,
-)
+from .Errors import LexicError

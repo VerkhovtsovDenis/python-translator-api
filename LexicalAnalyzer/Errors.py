@@ -1,18 +1,11 @@
-class InvalidNumberFormatError(Exception):
+class LexicError(Exception):
     pass
 
 
-class UnexpectedTokenSequenceError(Exception):
-    pass
+INVALID_TOKENS_MESSEAGE = (
+    "Syntax error, invalid tokens '{code}' found in line:{line}, pos:{pos}."
+)
 
-
-class InvalidRealNumberFormatError(Exception):
-    pass
-
-
-class UnmatchedParenthesisError(Exception):
-    pass
-
-
-class UnclosedStringLiteralError(Exception):
-    pass
+UNKNOW_TOKEN_MESSEAGE = (
+    "Syntax error, unknow token '{code}' found in line:{line}, pos:{pos}."
+)

@@ -102,3 +102,26 @@ class TokenTypes(Enum):
 
     # def __getattr__(self, attr):
     #     return getattr(self.value, attr)
+
+
+OPERATORS = (
+    TokenTypes.PLUS,
+    TokenTypes.MINUS,
+    TokenTypes.MULTIPLY,
+    TokenTypes.DIVISION,
+    TokenTypes.DIV,
+    TokenTypes.MOD,
+)
+
+
+DELIMETERS = (
+    TokenTypes.COLON,
+    TokenTypes.DOT,
+    TokenTypes.COMMA,
+    TokenTypes.LEFT_BRACKET,
+    TokenTypes.RIGHT_BRACKET,
+    TokenTypes.WHITESPACE,
+    TokenTypes.TABULATION,
+    TokenTypes.NEWLINE,
+    TokenTypes.SEMICOLON,
+)
