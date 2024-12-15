@@ -22,6 +22,13 @@ class Token:
         self.line = line
         self.pos = pos
 
+    def __eq__(self, value):
+        return (
+            isinstance(value, Token)
+            and self.token_type == value.token_type
+            and self.value == value.value
+        )
+
     def __str__(self):
         return (
             f"token: {self.token_type.name}, value: {repr(self.value)}"

@@ -6,7 +6,7 @@ from .Errors import (
     UnknowTokenError,
 )
 from .Token import Token
-from .TokenType import TokenTypes, OPERATORS, DELIMETERS
+from .TokenType import TokenTypes, OPERATORS_TOKENS, DELIMETERS_TOKENS
 
 
 class Lexer:
@@ -158,7 +158,7 @@ class Lexer:
         # ищем ошибки для опасных токенов
         if token.token_type in DANGEROUS_TOKEN_TYPES:
             next_token = self._get_next_token()
-            if next_token.token_type not in OPERATORS + DELIMETERS:
+            if next_token.token_type not in OPERATORS_TOKENS + DELIMETERS_TOKENS:
                 raise InvalidTokensError(
                     code=self._input[
                         self._pos - len(token.value) : self._pos + len(next_token.value)

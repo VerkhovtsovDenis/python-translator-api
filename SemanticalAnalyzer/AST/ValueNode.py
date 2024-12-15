@@ -1,17 +1,19 @@
+from SemanticalAnalyzer.AST import VariableNode
 from .ExpressionNode import ExpressionNode
 from LexicalAnalyzer import Token
+from SemanticalAnalyzer.Variable import BaseDataType
 
 
-class VariableNode(ExpressionNode):
-    """Класс для узла переменной."""
+class ValueNode(ExpressionNode):
+    """Класс узла для значения."""
 
-    def __init__(self, token: Token, data_type):
+    def __init__(self, token: Token, data_type: BaseDataType):
         self.variable = token
         self.data_type = data_type
 
     def __eq__(self, value):
         return (
-            isinstance(value, VariableNode)
+            isinstance(value, ValueNode)
             and self.variable == value.variable
             and self.data_type == value.data_type
         )

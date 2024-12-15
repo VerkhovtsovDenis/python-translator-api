@@ -1,5 +1,6 @@
 import pytest
 
+from tests.utils import emulate_tokens_generator
 from LexicalAnalyzer import Token, TokenTypes
 from SemanticalAnalyzer import (
     Parser,
@@ -14,13 +15,12 @@ from SemanticalAnalyzer import (
 )
 
 
-def emulate_tokens_generator(tokens: list[Token]):
-    for token in tokens:
-        yield token
-
-
 def test_empty_scope():
-    tokens = (Token(token_type=TokenTypes.BEGIN), Token(token_type=TokenTypes.END))
+    tokens = (
+        Token(token_type=TokenTypes.BEGIN),
+        Token(token_type=TokenTypes.END),
+        Token(token_type=TokenTypes.DOT),
+    )
     tokens_genarator = emulate_tokens_generator(tokens)
     parser = Parser(tokens_genarator)
     parser.parse_code()

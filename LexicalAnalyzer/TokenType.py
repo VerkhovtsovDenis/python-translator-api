@@ -10,7 +10,7 @@ class TokenType:
         return self.name
 
     def __repr__(self):
-        return f"<TokenType(name={self.name}, regex={self.regex})>"
+        return self.name
 
 
 # regular expressions can create in any case
@@ -93,18 +93,19 @@ class TokenTypes(Enum):
     NUMBER_REAL = TokenType("number_real", r"(\d+\.\d+)")
     STRING = TokenType("string", r"'(.*)'")
     ID = TokenType("id", r"([a-zA-Z_]\w*)")
+
+    # comments
     SINGLE_LINE_COMMENT = TokenType("single_line_comment", r"\/\/(.*\n)")
     MULTI_LINE_COMMENT = TokenType("multi_line_comment", r"\{([^{}]*)\}")
 
     def __str__(self):
-        return str(self.value.name)  # При вызове str(TokenTypes.WHITESPACE)
-        # будет возвращено 'whitespace'
+        return str(self.value.name)
 
-    # def __getattr__(self, attr):
-    #     return getattr(self.value, attr)
+    def __repr__(self):
+        return self.__str__()
 
 
-OPERATORS = (
+OPERATORS_TOKENS = (
     TokenTypes.PLUS,
     TokenTypes.MINUS,
     TokenTypes.MULTIPLY,
@@ -113,8 +114,14 @@ OPERATORS = (
     TokenTypes.MOD,
 )
 
+KEYWORDS_OPERATORS_TOKENS = (
+    TokenTypes.WRITELN,
+    TokenTypes.WRITE,
+    TokenTypes.READ,
+    TokenTypes.READLN,
+)
 
-DELIMETERS = (
+DELIMETERS_TOKENS = (
     TokenTypes.COLON,
     TokenTypes.DOT,
     TokenTypes.COMMA,
@@ -124,4 +131,20 @@ DELIMETERS = (
     TokenTypes.TABULATION,
     TokenTypes.NEWLINE,
     TokenTypes.SEMICOLON,
+)
+
+VALUES = (
+    TokenTypes.NUMBER_INTEGER,
+    TokenTypes.NUMBER_REAL,
+    TokenTypes.STRING,
+    TokenTypes.TRUE,
+    TokenTypes.FALSE,
+)
+
+DATA_TYPES_TOKENS = (
+    TokenTypes.INTEGER_TYPE,
+    TokenTypes.CHAR_TYPE,
+    TokenTypes.STRING_TYPE,
+    TokenTypes.BOOLEAN_TYPE,
+    TokenTypes.REAL_TYPE,
 )

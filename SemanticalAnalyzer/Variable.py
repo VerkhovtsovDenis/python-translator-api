@@ -82,12 +82,29 @@ TOKEN_TYPE_TO_DATA_TYPE_MAP = {
     TokenTypes.BOOLEAN_TYPE: BooleanDateType,
 }
 
+VALUE_TOKEN_TYPE_TO_DATA_TYPE = {
+    TokenTypes.NUMBER_INTEGER: IntegerDataType,
+    TokenTypes.NUMBER_REAL: RealDataType,
+    TokenTypes.STRING: StringDataType,
+    TokenTypes.TRUE: BooleanDateType,
+    TokenTypes.FALSE: BooleanDateType,
+}
+
+DATA_TYPE_TO_BASE_VALUES_MAP = {
+    IntegerDataType: 0,
+    RealDataType: 0.1,
+    StringDataType: "",
+    CharDataType: "",
+    BooleanDateType: False,
+}
+
 
 class Variable:
+
     def __init__(self, data_type: BaseDataType, name: str):
         self.data_type = data_type
         self.name = name
-        self.value = None
+        self.value = DATA_TYPE_TO_BASE_VALUES_MAP[data_type]
 
     def set_value(self, value):
         self.value = value

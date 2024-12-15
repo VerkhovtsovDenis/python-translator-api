@@ -3,61 +3,37 @@ from typing import Generator
 from .AST import (
     ExpressionNode,
     StatementsNode,
-    NumberNode,
+    ValueNode,
     VariableNode,
     BinaryOperatorNode,
     UnarOperatorNode,
 )
-from .Variable import Variable, TOKEN_TYPE_TO_DATA_TYPE_MAP
+from .Variable import (
+    Variable,
+    TOKEN_TYPE_TO_DATA_TYPE_MAP,
+    VALUE_TOKEN_TYPE_TO_DATA_TYPE,
+    BaseDataType,
+)
+
 from .Erorrs import (
     RedeceredIdError,
+    UnExpectedTokenError,
+    TypeError,
+    UnknowIdError,
 )
-from LexicalAnalyzer import Token, TokenType, TokenTypes
+from LexicalAnalyzer import (
+    Token,
+    TokenType,
+    TokenTypes,
+    KEYWORDS_OPERATORS_TOKENS,
+    VALUES,
+    DATA_TYPES_TOKENS,
+    OPERATORS_TOKENS,
+)
 
 
 class Parser:
-    """Класс парсера"""
-
-    KEY_WORDS_TOKENS = (
-        TokenTypes.BEGIN,
-        TokenTypes.END,
-        TokenTypes.PROGRAM,
-        TokenTypes.CONST,
-        TokenTypes.VAR,
-        TokenTypes.FUNCTION,
-        TokenTypes.PROCEDURE,
-        TokenTypes.ARRAY,
-    )
-
-    NUMBERS_TOKENS = (
-        TokenTypes.NUMBER_INTEGER,
-        TokenTypes.NUMBER_REAL,
-        TokenTypes.STRING,
-    )
-
-    OPERATORS_TOKENS = (
-        TokenTypes.EQUAL,
-        TokenTypes.NOT_EQUAL,
-        TokenTypes.LESS_THAN,
-        TokenTypes.GREATER_THAN,
-        TokenTypes.LESS_THAN_OR_EQUAL,
-        TokenTypes.GREATER_THAN_OR_EQUAL,
-        TokenTypes.PLUS,
-        TokenTypes.MINUS,
-        TokenTypes.MULTIPLY,
-        TokenTypes.DIVISION,
-        TokenTypes.MOD,
-        TokenTypes.DIV,
-        # other logical and, or, not
-    )
-
-    DATA_TYPES_TOKENS = (
-        TokenTypes.INTEGER_TYPE,
-        TokenTypes.CHAR_TYPE,
-        TokenTypes.STRING_TYPE,
-        TokenTypes.BOOLEAN_TYPE,
-        TokenTypes.REAL_TYPE,
-    )
+    """Класс парсера."""
 
     def __init__(self, tokens_generator: Generator[Token, None, None]):
         self._tokens_generator = tokens_generator
@@ -66,7 +42,7 @@ class Parser:
 
         self._global_scope: dict[str, Variable] = {}
 
-    def _get_next_token(self):
+    def _next_token(self):
         """
         Передвигает self._current_token на следующий токен из генератора self._tokens_generator.
 
@@ -87,7 +63,7 @@ class Parser:
             expected_tokens_type (list[TokenType]): множество допустимых типов токенов.
 
         Returns:
-            bool: входит ли тип текущего токена в множество переданных.
+            bool: Входит ли тип текущего токена в множество переданных.
         """
         if self._current_token.token_type in expected_tokens_type:
             return True
@@ -100,84 +76,41 @@ class Parser:
             expected_tokens_type (list[TokenType]): множество допустимых типов токенов.
 
         Raises:
-            ValueError: Dash app required for force init callbacks.
+            UnExpectedTokenError: Ожидался другой токен.
         """
 
         if not self._match(*expected_tokens_type):
-            # TODO сделать нормальное сообщение об ошибке
-            raise ValueError(
-                f"""на позщиции {self._current_token.pos} ожидается токен из {expected_tokens_type}\n
-                а был получен {self._current_token}"""
+            raise UnExpectedTokenError(
+                expected_tokens=expected_tokens_type,
+                actual_token=self._current_token.token_type,
+                line=self._current_token.line,
+                pos=self._current_token.pos,
             )
 
-    def parse_variable_or_number(self):
-        number_token = self._match(*self.NUMBERS_TOKENS)
-        if number_token:
-            return NumberNode(number_token)
+    def _check_varibale_in_scope(self):
+        """
+        Проверяет, что текущий токен есть в скоупе.
 
-        varible_token = self._match(TokenTypes.ID)
-
-        if varible_token:
-            return VariableNode(varible_token)
-
-        raise ValueError("Ожидалось число или идентификатор")
-
-    def parse_parentheses(self) -> ExpressionNode:
-        """Парсит выражение в скобках"""
-        if self._match(TokenTypes.LEFT_BRACKET):
-            node = self.parse_formula()
-            self._require(TokenTypes.RIGHT_BRACKET)
-            return node
-        else:
-            return self.parse_variable_or_number()
-
-    def parse_formula(self) -> ExpressionNode:
-        """Парсит математическое выражение"""
-        left_node = self.parse_parentheses()
-        operator_token = self.math(expected_tokens_type=self.OPERATORS)
-
-        while operator_token:
-            right_token = self.parse_parentheses()
-            left_node = BinaryOperatorNode(operator_token, left_node, right_token)
-            operator_token = self.math(expected_tokens_type=self.OPERATORS)
-
-        return left_node
-
-    def parse_expression(self):
-        """Парсит одно выражение"""
-        if self._match(*self.KEY_WORDS_TOKENS):
-            key_word_node = self.parse_key_word()
-            return key_word_node
-
-        elif self._match(TokenTypes.ID):
-            self.pos -= 1
-            id_node = self.parse_id()
-            assign_operator_token = self._match(TokenTypes.ASSIGNMENT)
-            if assign_operator_token:
-                right_operand_token = self.parse_formula()
-                left_operand_token = id_node
-                binary_operator_node = BinaryOperatorNode(
-                    assign_operator_token, left_operand_token, right_operand_token
-                )
-                return binary_operator_node
-        raise ValueError("lexic error")
-
-    def parse_writeln(self) -> ExpressionNode:
-        writeln_token = self._match(TokenTypes.WRITELN)
-        if writeln_token:
-            operand = self.parse_parentheses()
-            return UnarOperatorNode(writeln_token, operand)
-        else:
-            raise ValueError()
+        Raises:
+            UnExpectedTokenError: Текущий токен не идентификатор.
+            UnknowIdError: Текущего токена нет в скоупе.
+        """
+        self._require(TokenTypes.ID)
+        if self._current_token.value not in self._global_scope:
+            raise UnknowIdError(
+                self._current_token.value,
+                self._current_token.line,
+                self._current_token.pos,
+            )
 
     def _parse_var_block(self):
         """Парсит секцию var, когда текущий токен на ключевом слове var"""
         self._require(TokenTypes.VAR)
-        self._get_next_token()
+        self._next_token()
 
         while self._match(TokenTypes.ID):
             self._parse_type_scope()
-            self._get_next_token()
+            self._next_token()
 
     def _parse_type_scope(self):
         """Парсит объявление переменных одного из типов данных"""
@@ -185,17 +118,17 @@ class Parser:
 
         self._require(TokenTypes.ID)
         variables_names.append(self._current_token.value)
-        self._get_next_token()
+        self._next_token()
 
         while not self._match(TokenTypes.COLON):
             self._require(TokenTypes.COMMA)
-            self._get_next_token()
+            self._next_token()
             self._require(TokenTypes.ID)
             variables_names.append(self._current_token.value)
-            self._get_next_token()
+            self._next_token()
 
-        self._get_next_token()
-        self._require(*self.DATA_TYPES_TOKENS)
+        self._next_token()
+        self._require(*DATA_TYPES_TOKENS)
 
         varibales_type = TOKEN_TYPE_TO_DATA_TYPE_MAP[self._current_token.token_type]
 
@@ -205,31 +138,199 @@ class Parser:
             varibale = Variable(varibales_type, variable_name)
             self._global_scope[variable_name] = varibale
 
-        self._get_next_token()
+        self._next_token()
         self._require(TokenTypes.SEMICOLON)
 
-    def parse_program_block(self):
-        pass
+    def _parse_program_block(self):
+        """Парсит блок program."""
+        self._require(TokenTypes.PROGRAM)
+        self._next_token()
 
-    def parse_code_block():
-        pass
+        self._require(TokenTypes.ID)
+        self._next_token()
 
-    def parse_code(self) -> ExpressionNode:
+        self._require(TokenTypes.SEMICOLON)
+        self._next_token()
+
+    def _parse_code_block(self) -> list[ExpressionNode]:
+        """
+        Парсит блок кода. Все что между begin и end.
+
+        Returns:
+            list[ExpressionNode]: Список узлов ast.
+        """
+        nodes = []
+
+        self._require(TokenTypes.BEGIN)
+        self._next_token()
+
+        while not self._match(TokenTypes.END):
+            node = self._parse_code_str()
+            nodes.append(node)
+
+        self._require(TokenTypes.END)
+        self._next_token()
+
+        return nodes
+
+    def _parse_code_str(self) -> ExpressionNode:
+        """
+        Парсит одну строчку кода.
+
+        Returns:
+            ExpressionNode: Узел ast.
+        """
+        # Первым в строчке кода может быть оператор, переменная, ...
+        if self._match(*KEYWORDS_OPERATORS_TOKENS):
+            keyword_operator_node = self._parse_keyword_operator()
+            return keyword_operator_node
+        elif self._match(TokenTypes.ID):
+            # Если первой в строчке переменная, это обязательно операция присваивания.
+            self._check_varibale_in_scope()
+
+            variable_node = VariableNode(
+                self._current_token,
+                self._global_scope[self._current_token.value].data_type,
+            )
+            self._next_token()
+
+            self._require(TokenTypes.ASSIGNMENT)
+            operator_token = self._current_token
+            self._next_token()
+
+            right_part = self._parse_formula(
+                self._global_scope[variable_node.variable.value].data_type
+            )
+
+            self._require(TokenTypes.SEMICOLON)
+            self._next_token()
+
+            return BinaryOperatorNode(operator_token, variable_node, right_part)
+
+    def _parse_formula(self, expected_type: BaseDataType) -> ExpressionNode:
+        """
+        Парсит формулу. Формула, это все то что может идти после оператора присваивания.
+
+        Args:
+        expected_type (BaseDataType): Ожидаемый тип данных для формулы.
+
+        Returns:
+            ExpressionNode: Узел ast.
+
+        Raises:
+            TypeError: При не соответсвии типов.
+        """
+        left_node = (
+            self._parse_brackets_formula(expected_type)
+            if self._match(TokenTypes.LEFT_BRACKET)
+            else self._parse_value_or_id(expected_type)
+        )
+        operator = self._current_token if self._match(*OPERATORS_TOKENS) else None
+
+        while operator:
+            self._next_token()
+            right_node = (
+                self._parse_brackets_formula(expected_type)
+                if self._match(TokenTypes.LEFT_BRACKET)
+                else self._parse_value_or_id(expected_type)
+            )
+            left_node = BinaryOperatorNode(operator, left_node, right_node)
+            operator = self._current_token if self._match(*OPERATORS_TOKENS) else None
+        return left_node
+
+    def _parse_value_or_id(self, expected_type: BaseDataType):
+        """
+        Парсит значение или идентификатор.
+
+        Args:
+        expected_type (BaseDataType): Ожидаемый тип данных.
+
+        Returns:
+            ExpressionNode: Узел ast.
+
+        Raises:
+            TypeError: При не соответсвии типов.
+            UnknowIdError: Текущего токена нет в скоупе.
+        """
+
+        self._require(*VALUES, TokenTypes.ID)
+        if self._match(*VALUES):
+
+            if (
+                not VALUE_TOKEN_TYPE_TO_DATA_TYPE[self._current_token.token_type]
+                == expected_type
+            ):
+                raise TypeError(
+                    self._current_token.value,
+                    expected_type.__name__,
+                    self._current_token.line,
+                    self._current_token.pos,
+                )
+            node = ValueNode(self._current_token, data_type=expected_type)
+            self._next_token()
+            return node
+
+        else:
+            self._check_varibale_in_scope()
+            if self._global_scope[self._current_token.value].data_type != expected_type:
+                raise TypeError(
+                    self._current_token.value,
+                    expected_type.__name__,
+                    self._current_token.line,
+                    self._current_token.pos,
+                )
+            node = VariableNode(self._current_token, data_type=expected_type)
+            self._next_token()
+            return node
+
+    def _parse_brackets_formula(self, expected_type: BaseDataType) -> ExpressionNode:
+        """
+        Парсит формулу в скобках.
+
+        Args:
+        expected_type (BaseDataType): Ожидаемый тип данных для формулы.
+
+        Returns:
+            ExpressionNode: Узел ast.
+
+        Raises:
+            TypeError: При не соответсвии типов.
+        """
+        self._require(TokenTypes.LEFT_BRACKET)
+        self._next_token()
+        node = self._parse_formula(expected_type)
+        self._require(TokenTypes.RIGHT_BRACKET)
+        self._next_token()
+        return node
+
+    def parse_code(self) -> ExpressionNode | None:
         """Парсит весь код."""
-
-        root = StatementsNode()
         try:
-            self._get_next_token()
+            self._next_token()
 
-            if self._current_token.token_type == TokenTypes.VAR:
-                self._parse_var_block()
+            # Парсинг блоков, до основного кода программы.
+            while not self._match(TokenTypes.BEGIN):
+                if self._current_token.token_type == TokenTypes.PROGRAM:
+                    self._parse_program_block()
 
-            print(self._global_scope)
+                if self._current_token.token_type == TokenTypes.VAR:
+                    self._parse_var_block()
+
+            # Для упрощения тестирования секция основоного кода не обязательная.
+            # В реальных компиляторах секция она обязательна.
+            if self._current_token.token_type == TokenTypes.BEGIN:
+                try:
+                    ast = StatementsNode()
+                    for node in self._parse_code_block():
+                        ast.add_node(node)
+                    self._require(TokenTypes.DOT)
+
+                    return ast
+                except StopIteration:
+                    raise ValueError("Не встречена точка.")
+                else:
+                    self._require(TokenTypes.DOT)
         except StopIteration:
-            print("Парсинг закончен")
-
-        # while self.pos < len(self.tokens):
-        #     code_string_node = self.parse_expression()
-        #     self._require(expected_tokens_type=TokenTypes.SEMICOLON)
-        #     root.add_node(code_string_node)
-        # return root
+            pass
+        finally:
+            print("Парсинг завершен.")
