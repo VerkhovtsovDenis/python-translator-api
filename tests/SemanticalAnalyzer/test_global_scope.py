@@ -3,7 +3,7 @@ import pytest
 from LexicalAnalyzer import Token, TokenTypes
 from SemanticalAnalyzer import (
     Parser,
-    SemanticError,
+    RedeceredIdError,
     Variable,
     IntegerDataType,
     RealDataType,
@@ -125,7 +125,7 @@ def test_redeclared_id_raise():
         Token(token_type=TokenTypes.INTEGER_TYPE),
         Token(token_type=TokenTypes.SEMICOLON),
     )
-    with pytest.raises(SemanticError):
+    with pytest.raises(RedeceredIdError):
         tokens_genarator = emulate_tokens_generator(tokens)
         parser = Parser(tokens_genarator)
         parser.parse_code()

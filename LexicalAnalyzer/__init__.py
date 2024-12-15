@@ -2,4 +2,4 @@
 from .Lexer import Lexer
 from .TokenType import TokenType, TokenTypes
 from .Token import Token
-from .Errors import LexicError
+from .Errors import UnknowTokenError, InvalidTokensError

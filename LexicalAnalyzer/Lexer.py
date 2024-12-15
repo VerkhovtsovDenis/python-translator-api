@@ -1,7 +1,10 @@
 import re
 from typing import Generator
 
-from .Errors import LexicError, INVALID_TOKENS_MESSEAGE, UNKNOW_TOKEN_MESSEAGE
+from .Errors import (
+    InvalidTokensError,
+    UnknowTokenError,
+)
 from .Token import Token
 from .TokenType import TokenTypes, OPERATORS, DELIMETERS
 
@@ -97,12 +100,10 @@ class Lexer:
                 possible_tokens.append(token)
 
         if not possible_tokens:
-            raise LexicError(
-                UNKNOW_TOKEN_MESSEAGE.format(
-                    code=self._input[self._pos],
-                    line=self._line,
-                    pos=self._pos,
-                )
+            raise UnknowTokenError(
+                code=self._input[self._pos],
+                line=self._line,
+                pos=self._pos,
             )
 
         # За правильный токен, считаем самый длинный из возможных
@@ -118,8 +119,6 @@ class Lexer:
 
     def _preprocess(self):
         """перемещает указатель self._pos на последний не пробельный символ."""
-
-        # TODO убрать этот метод, т.к пробелы теперь игнорируются
 
         if self._input[self._pos] not in (" ", "\t"):
             return
@@ -160,26 +159,10 @@ class Lexer:
         if token.token_type in DANGEROUS_TOKEN_TYPES:
             next_token = self._get_next_token()
             if next_token.token_type not in OPERATORS + DELIMETERS:
-                raise LexicError(
-                    INVALID_TOKENS_MESSEAGE.format(
-                        code=self._input[
-                            self._pos
-                            - len(token.value) : self._pos
-                            + len(next_token.value)
-                        ],
-                        line=token.line,
-                        pos=token.pos,
-                    )
+                raise InvalidTokensError(
+                    code=self._input[
+                        self._pos - len(token.value) : self._pos + len(next_token.value)
+                    ],
+                    line=token.line,
+                    pos=token.pos,
                 )
-
-    def _check_number_integer_token(self, token):
-        pass
-
-    def _check_number_real_token(self, token):
-        pass
-
-    def _check_string_token(self, token):
-        pass
-
-    def _check_id_token(self, token):
-        pass

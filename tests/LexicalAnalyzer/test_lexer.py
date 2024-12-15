@@ -1,8 +1,7 @@
 # flake8: noqa: F401
 import pytest
 
-from LexicalAnalyzer import Lexer, TokenTypes, LexicError
-from FileManager import FileManager
+from LexicalAnalyzer import Lexer, TokenTypes, InvalidTokensError, UnknowTokenError
 
 
 def assert_tokens_sequence(actual_sequence, expected_sequence):
@@ -135,14 +134,14 @@ def test_get_lexem_hard_programm():
     ),
 )
 def test_raise_lexic_error_when_unknow_token(pascal_code):
-    with pytest.raises(LexicError):
+    with pytest.raises(UnknowTokenError):
         list(Lexer(code=pascal_code).tokenize())
 
 
 @pytest.mark.parametrize(
     ("pascal_code"),
-    (("string a := 'g"), ("124.3p"), ("123d")),
+    (("124.3p"), ("123d"), ("'sdf'f"), ("'fds'1")),
 )
 def test_raise_lexic_error_when_invalid_tokens(pascal_code):
-    with pytest.raises(LexicError):
+    with pytest.raises(InvalidTokensError):
         list(Lexer(code=pascal_code).tokenize())

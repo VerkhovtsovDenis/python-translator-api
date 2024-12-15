@@ -10,8 +10,7 @@ from .AST import (
 )
 from .Variable import Variable, TOKEN_TYPE_TO_DATA_TYPE_MAP
 from .Erorrs import (
-    SemanticError,
-    REDECARED_ID_MESSEAGE,
+    RedeceredIdError,
 )
 from LexicalAnalyzer import Token, TokenType, TokenTypes
 
@@ -105,6 +104,7 @@ class Parser:
         """
 
         if not self._match(*expected_tokens_type):
+            # TODO сделать нормальное сообщение об ошибке
             raise ValueError(
                 f"""на позщиции {self._current_token.pos} ожидается токен из {expected_tokens_type}\n
                 а был получен {self._current_token}"""
@@ -170,7 +170,7 @@ class Parser:
         else:
             raise ValueError()
 
-    def _parse_global_scope(self):
+    def _parse_var_block(self):
         """Парсит секцию var, когда текущий токен на ключевом слове var"""
         self._require(TokenTypes.VAR)
         self._get_next_token()
@@ -201,12 +201,18 @@ class Parser:
 
         for variable_name in variables_names:
             if variable_name in self._global_scope:
-                raise SemanticError(REDECARED_ID_MESSEAGE.format(id=variable_name))
+                raise RedeceredIdError(id=variable_name)
             varibale = Variable(varibales_type, variable_name)
             self._global_scope[variable_name] = varibale
 
         self._get_next_token()
         self._require(TokenTypes.SEMICOLON)
+
+    def parse_program_block(self):
+        pass
+
+    def parse_code_block():
+        pass
 
     def parse_code(self) -> ExpressionNode:
         """Парсит весь код."""
@@ -216,7 +222,7 @@ class Parser:
             self._get_next_token()
 
             if self._current_token.token_type == TokenTypes.VAR:
-                self._parse_global_scope()
+                self._parse_var_block()
 
             print(self._global_scope)
         except StopIteration:

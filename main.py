@@ -20,11 +20,6 @@ if __name__ == "__main__":
     # path = r"\tests\lexer_code\1.pas"
     # code = FileManager.get_code(relative_path=path)
     code = """
-    var
-        a: integer;
-        a: integer;
-    begin
-        B:=12+3;
-    end.
+    true1
     """
     parse_programm(code)

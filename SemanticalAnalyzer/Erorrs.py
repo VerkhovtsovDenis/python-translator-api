@@ -1,5 +1,5 @@
-class SemanticError(Exception):
-    pass
+class RedeceredIdError(Exception):
+    MESSAGE = "Semantic error, Re-declared identifier '{id}'."
 
-
-REDECARED_ID_MESSEAGE = "Semantic error, Re-declared identifier '{id}'."
+    def __init__(self, id: str):
+        super().__init__(self.MESSAGE.format(id=id))

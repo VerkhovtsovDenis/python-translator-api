@@ -1,6 +1,6 @@
 from typing import Any
 from LexicalAnalyzer import TokenType, TokenTypes
-from .Erorrs import SemanticError
+from .Erorrs import RedeceredIdError
 
 
 class BaseDataType:
@@ -16,7 +16,7 @@ class BaseDataType:
         Raises:
             NotImplementedError: Метод не реализован.
         """
-        raise SemanticError
+        raise RedeceredIdError
 
 
 class IntegerDataType(BaseDataType):
