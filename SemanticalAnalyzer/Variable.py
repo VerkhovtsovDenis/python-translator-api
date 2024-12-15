@@ -7,71 +7,25 @@ class BaseDataType:
     """Базовый класс для типов данных."""
     token_type: TokenType = None
 
-    def check_value(self, value: Any) -> bool:
-        """
-        Проверяет принадлежит ли переданное значение типу данных.
-        Args:
-            value (Any): любое значение.
-
-        Raises:
-            NotImplementedError: Метод не реализован.
-        """
-        raise RedeceredIdError
-
 
 class IntegerDataType(BaseDataType):
     token_type = TokenTypes.INTEGER_TYPE
-
-    def check_value(self, value):
-        try:
-            int(value)
-            return True
-        finally:
-            return False
 
 
 class RealDataType(BaseDataType):
     token_type = TokenTypes.REAL_TYPE
 
-    def check_value(self, value):
-        try:
-            float(value)
-            return True
-        finally:
-            return False
-
 
 class StringDataType(BaseDataType):
     token_type = TokenTypes.STRING_TYPE
-
-    def check_value(self, value):
-        try:
-            str(value)
-            return True
-        finally:
-            return False
 
 
 class CharDataType(BaseDataType):
     token_type = TokenTypes.CHAR_TYPE
 
-    def check_value(self, value):
-        try:
-            str(value)
-            return len(str(value)) == 1
-        finally:
-            return False
-
 
 class BooleanDateType(BaseDataType):
     token_type = TokenTypes.BOOLEAN_TYPE
-
-    def check_value(self, value):
-        try:
-            bool(value)
-            return True
-        finally:
-            return False
 
 
 TOKEN_TYPE_TO_DATA_TYPE_MAP = {
@@ -96,6 +50,14 @@ DATA_TYPE_TO_BASE_VALUES_MAP = {
     StringDataType: "",
     CharDataType: "",
     BooleanDateType: False,
+}
+
+DATA_TYPES_TO_PYTHON = {
+    IntegerDataType: "int",
+    RealDataType: "float",
+    StringDataType: "str",
+    CharDataType: "str",
+    BooleanDateType: "bool",
 }
 
 

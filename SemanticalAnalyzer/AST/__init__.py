@@ -4,3 +4,4 @@ from .VariableNode import VariableNode
 from .StatementsNode import StatementsNode
 from .UnarOperatorNode import UnarOperatorNode
 from .ValueNode import ValueNode
+from .KeywordOperatorNode import KeywordOperatorNode

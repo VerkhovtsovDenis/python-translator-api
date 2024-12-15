@@ -7,6 +7,7 @@ from .AST import (
     VariableNode,
     BinaryOperatorNode,
     UnarOperatorNode,
+    KeywordOperatorNode,
 )
 from .Variable import (
     Variable,
@@ -114,6 +115,7 @@ class Parser:
 
     def _parse_type_scope(self):
         """Парсит объявление переменных одного из типов данных"""
+        # TODO нужно добавлять в аст присвоения с значениями по умолчанию для переменных.
         variables_names: list[str] = []
 
         self._require(TokenTypes.ID)
@@ -183,6 +185,8 @@ class Parser:
         # Первым в строчке кода может быть оператор, переменная, ...
         if self._match(*KEYWORDS_OPERATORS_TOKENS):
             keyword_operator_node = self._parse_keyword_operator()
+            self._require(TokenTypes.SEMICOLON)
+            self._next_token()
             return keyword_operator_node
         elif self._match(TokenTypes.ID):
             # Если первой в строчке переменная, это обязательно операция присваивания.
@@ -207,7 +211,9 @@ class Parser:
 
             return BinaryOperatorNode(operator_token, variable_node, right_part)
 
-    def _parse_formula(self, expected_type: BaseDataType) -> ExpressionNode:
+    def _parse_formula(
+        self, expected_type: BaseDataType, brackets=False
+    ) -> ExpressionNode:
         """
         Парсит формулу. Формула, это все то что может идти после оператора присваивания.
 
@@ -234,11 +240,15 @@ class Parser:
                 if self._match(TokenTypes.LEFT_BRACKET)
                 else self._parse_value_or_id(expected_type)
             )
-            left_node = BinaryOperatorNode(operator, left_node, right_node)
+            left_node = BinaryOperatorNode(
+                operator, left_node, right_node, brackets=brackets
+            )
             operator = self._current_token if self._match(*OPERATORS_TOKENS) else None
         return left_node
 
-    def _parse_value_or_id(self, expected_type: BaseDataType):
+    def _parse_value_or_id(
+        self, expected_type: BaseDataType = None, without_type_check=False
+    ):
         """
         Парсит значение или идентификатор.
 
@@ -259,6 +269,7 @@ class Parser:
             if (
                 not VALUE_TOKEN_TYPE_TO_DATA_TYPE[self._current_token.token_type]
                 == expected_type
+                and not without_type_check
             ):
                 raise TypeError(
                     self._current_token.value,
@@ -272,7 +283,10 @@ class Parser:
 
         else:
             self._check_varibale_in_scope()
-            if self._global_scope[self._current_token.value].data_type != expected_type:
+            if (
+                self._global_scope[self._current_token.value].data_type != expected_type
+                and not without_type_check
+            ):
                 raise TypeError(
                     self._current_token.value,
                     expected_type.__name__,
@@ -298,10 +312,33 @@ class Parser:
         """
         self._require(TokenTypes.LEFT_BRACKET)
         self._next_token()
-        node = self._parse_formula(expected_type)
+        node = self._parse_formula(expected_type, brackets=True)
         self._require(TokenTypes.RIGHT_BRACKET)
         self._next_token()
         return node
+
+    def _parse_keyword_operator(self):
+        """Парсит оператор-ключевое слово."""
+        self._require(*KEYWORDS_OPERATORS_TOKENS)
+        keyword_token = self._current_token
+
+        self._next_token()
+        self._require(TokenTypes.LEFT_BRACKET)
+        self._next_token()
+        params = []
+
+        while self._match(*VALUES, TokenTypes.ID):
+            param_node = self._parse_value_or_id(without_type_check=True)
+            params.append(param_node)
+            if self._match(TokenTypes.RIGHT_BRACKET):
+                break
+            self._require(TokenTypes.COMMA)
+            self._next_token()
+
+        self._require(TokenTypes.RIGHT_BRACKET)
+        self._next_token()
+
+        return KeywordOperatorNode(keyword_token, params)
 
     def parse_code(self) -> ExpressionNode | None:
         """Парсит весь код."""
@@ -327,8 +364,7 @@ class Parser:
 
                     return ast
                 except StopIteration:
-                    raise ValueError("Не встречена точка.")
-                else:
+                    raise UnExpectedTokenError("Dot expected.")
                     self._require(TokenTypes.DOT)
         except StopIteration:
             pass

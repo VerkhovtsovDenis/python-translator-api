@@ -17,3 +17,6 @@ class ValueNode(ExpressionNode):
             and self.variable == value.variable
             and self.data_type == value.data_type
         )
+
+    def to_python(self):
+        return self.variable.value
