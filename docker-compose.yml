@@ -1,0 +1,8 @@
+services:
+  app:
+    image: translator_app_image
+    build:
+      context: .
+    container_name: translator_app
+    ports:
+      - 8000:8000 
