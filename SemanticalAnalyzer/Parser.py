@@ -373,5 +373,3 @@ class Parser:
                     self._require(TokenTypes.DOT)
         except StopIteration:
             pass
-        finally:
-            print("Парсинг завершен.")
