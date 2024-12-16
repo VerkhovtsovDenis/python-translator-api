@@ -2,6 +2,51 @@
 1. Теория языков программирования и компиляторы - выполнена работа над анализом существующих решений и определена методико-теоритическая база создания транслятора с Pascal в Python;
 2. Методы коллективной разработки - выполнено создание документации к работающей программе, программа дополнена модулями анализа и трансляции.
 
+# Запуск
+
+`docker compose up`
+
+документация доступна по `http://127.0.0.1:8000/docs/`
+
+# Api
+эндпоинт - post `http://localhost:8000/translate`
+тело запроса:
+```
+    {
+        "pascal_code": "string",
+        "target_language": "python"
+    }
+```
+
+пример запроса:
+```
+    {
+        "pascal_code": "var a, b: integer; begin b:=(a+7)*8; write(b); end.",
+        "target_language": "python"
+    }
+```
+пример ответа:
+```
+    {
+        "result_code": "b: int = (a + 7) * 8\nprint(b, sep='')\n",
+        "erors": ""
+    }
+```
+пример запроса:
+```
+    {
+    "pascal_code": "var a, a: integer; begin b:=(a+7)*8; write(b); end.",
+    "target_language": "python"
+    }
+```
+пример ответа:
+```
+    {
+    "result_code": "",
+    "erors": "Semantic error, Re-declared identifier 'a'."
+    }
+```
+
 # Docstrings Style
 ```
 def layout(dash_app: Dash) -> filters_layout.FiltersLayout:
