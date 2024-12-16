@@ -317,8 +317,13 @@ class Parser:
         self._next_token()
         return node
 
-    def _parse_keyword_operator(self):
-        """Парсит оператор-ключевое слово."""
+    def _parse_keyword_operator(self) -> ExpressionNode:
+        """
+        Парсит оператор-ключевое слово.
+
+        Returns:
+            ExpressionNode: Узел ast.
+        """
         self._require(*KEYWORDS_OPERATORS_TOKENS)
         keyword_token = self._current_token
 

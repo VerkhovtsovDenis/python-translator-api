@@ -1,3 +1,4 @@
+# flake8: noqa: F401
 from .BinaryOperatorNode import BinaryOperatorNode
 from .ExpressionNode import ExpressionNode
 from .VariableNode import VariableNode

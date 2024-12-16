@@ -1,4 +1,5 @@
 from SemanticalAnalyzer.AST import StatementsNode
+from constants import SupportLanguages
 
 
 class Generator:
@@ -7,7 +8,7 @@ class Generator:
     def __init__(self, ast: StatementsNode):
         self._ast = ast
 
-    def generate(self) -> str:
+    def generate(self, target_language: SupportLanguages) -> str:
         """
         Генерирует код на питон.
 
@@ -15,8 +16,10 @@ class Generator:
             str: Код на питон.
         """
         python_code = ""
-        for str_node in self._ast.code_strings_nodes:
-            python_code += str_node.to_python()
-            python_code += "\n"
+        # TODO поолучать соотв метод генерации через getatr
+        if target_language == SupportLanguages.PYTHON:
+            for str_node in self._ast.code_strings_nodes:
+                python_code += str_node.to_python()
+                python_code += "\n"
 
         return python_code
