@@ -113,6 +113,23 @@ class Parser:
             self._parse_type_scope()
             self._next_token()
 
+    def _make_scope_assigment(self) -> list[ExpressionNode]:
+        """
+        Делает объявление переменных из скоупа.
+
+        Returns:
+            list[ExpressionNode]: Список узлов ast.
+        """
+        result: list[ExpressionNode] = []
+        for name, variable in self._global_scope.items():
+            left_part = VariableNode(variable, data_type=variable.data_type)
+            operator = Token(token_type=TokenTypes.ASSIGNMENT)
+            right_part = ValueNode(variable.value, variable.data_type)
+            result.append(
+                BinaryOperatorNode(operator, left_part, right_part, type_hint=True)
+            )
+        return result
+
     def _parse_type_scope(self):
         """Парсит объявление переменных одного из типов данных"""
         # TODO нужно добавлять в аст присвоения с значениями по умолчанию для переменных.
@@ -193,7 +210,7 @@ class Parser:
             self._check_varibale_in_scope()
 
             variable_node = VariableNode(
-                self._current_token,
+                self._global_scope[self._current_token.value],
                 self._global_scope[self._current_token.value].data_type,
             )
             self._next_token()
@@ -203,7 +220,7 @@ class Parser:
             self._next_token()
 
             right_part = self._parse_formula(
-                self._global_scope[variable_node.variable.value].data_type
+                self._global_scope[variable_node.variable.name].data_type
             )
 
             self._require(TokenTypes.SEMICOLON)
@@ -277,7 +294,7 @@ class Parser:
                     self._current_token.line,
                     self._current_token.pos,
                 )
-            node = ValueNode(self._current_token, data_type=expected_type)
+            node = ValueNode(self._current_token.value, data_type=expected_type)
             self._next_token()
             return node
 
@@ -293,7 +310,9 @@ class Parser:
                     self._current_token.line,
                     self._current_token.pos,
                 )
-            node = VariableNode(self._current_token, data_type=expected_type)
+            node = VariableNode(
+                self._global_scope[self._current_token.value], data_type=expected_type
+            )
             self._next_token()
             return node
 
@@ -350,6 +369,7 @@ class Parser:
         try:
             self._next_token()
 
+            ast = StatementsNode()
             # Парсинг блоков, до основного кода программы.
             while not self._match(TokenTypes.BEGIN):
                 if self._current_token.token_type == TokenTypes.PROGRAM:
@@ -357,19 +377,20 @@ class Parser:
 
                 if self._current_token.token_type == TokenTypes.VAR:
                     self._parse_var_block()
+                    for node in self._make_scope_assigment():
+                        ast.add_node(node)
 
             # Для упрощения тестирования секция основоного кода не обязательная.
             # В реальных компиляторах секция она обязательна.
             if self._current_token.token_type == TokenTypes.BEGIN:
                 try:
-                    ast = StatementsNode()
+
                     for node in self._parse_code_block():
                         ast.add_node(node)
                     self._require(TokenTypes.DOT)
-
-                    return ast
                 except StopIteration:
                     raise UnExpectedTokenError("Dot expected.")
                     self._require(TokenTypes.DOT)
+            return ast
         except StopIteration:
             pass

@@ -46,7 +46,7 @@ VALUE_TOKEN_TYPE_TO_DATA_TYPE = {
 
 DATA_TYPE_TO_BASE_VALUES_MAP = {
     IntegerDataType: 0,
-    RealDataType: 0.1,
+    RealDataType: 0.0,
     StringDataType: "",
     CharDataType: "",
     BooleanDateType: False,
