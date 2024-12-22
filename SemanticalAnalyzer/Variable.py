@@ -45,11 +45,11 @@ VALUE_TOKEN_TYPE_TO_DATA_TYPE = {
 }
 
 DATA_TYPE_TO_BASE_VALUES_MAP = {
-    IntegerDataType: 0,
-    RealDataType: 0.0,
+    IntegerDataType: "0",
+    RealDataType: "0.0",
     StringDataType: "",
     CharDataType: "",
-    BooleanDateType: False,
+    BooleanDateType: "False",
 }
 
 DATA_TYPES_TO_PYTHON = {

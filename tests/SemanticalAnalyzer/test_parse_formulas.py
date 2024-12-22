@@ -24,8 +24,6 @@ def assert_ast_by_tokens(input_tokens: list[Token], expected_ast: StatementsNode
     actual_ast = parser.parse_code()
     assert actual_ast == expected_ast
 
-    assert actual_ast == expected_ast
-
 
 def test_unknow_id_raise():
     tokens = (
@@ -112,6 +110,8 @@ def test_type_unexpected_token(code_tokens, scope_integer_a_b_tokens):
 
 def test_assignment_with_formula_with_two_varibles(
     scope_integer_a_b_tokens,
+    a_scope_node,
+    b_scope_node,
     a_assignment_b_tokens,
     a_assignment_b_node,
 ):
@@ -126,6 +126,8 @@ def test_assignment_with_formula_with_two_varibles(
     )
 
     expected_ast = StatementsNode()
+    expected_ast.add_node(a_scope_node)
+    expected_ast.add_node(b_scope_node)
     expected_ast.add_node(a_assignment_b_node)
 
     assert_ast_by_tokens(tokens, expected_ast)
@@ -133,6 +135,8 @@ def test_assignment_with_formula_with_two_varibles(
 
 def test_assignment_with_formula_with_varibale_and_value(
     scope_integer_a_b_tokens,
+    a_scope_node,
+    b_scope_node,
     a_assignment_12_tokens,
     a_assignment_12_node,
 ):
@@ -147,6 +151,8 @@ def test_assignment_with_formula_with_varibale_and_value(
     )
 
     expected_ast = StatementsNode()
+    expected_ast.add_node(a_scope_node)
+    expected_ast.add_node(b_scope_node)
     expected_ast.add_node(a_assignment_12_node)
 
     assert_ast_by_tokens(tokens, expected_ast)
@@ -154,6 +160,8 @@ def test_assignment_with_formula_with_varibale_and_value(
 
 def test_two_assignment_test(
     scope_integer_a_b_tokens,
+    a_scope_node,
+    b_scope_node,
     a_assignment_b_tokens,
     a_assignment_b_node,
     a_assignment_12_tokens,
@@ -171,6 +179,8 @@ def test_two_assignment_test(
     )
 
     expected_ast = StatementsNode()
+    expected_ast.add_node(a_scope_node)
+    expected_ast.add_node(b_scope_node)
     expected_ast.add_node(a_assignment_b_node)
     expected_ast.add_node(a_assignment_12_node)
 
@@ -179,6 +189,8 @@ def test_two_assignment_test(
 
 def test_assignment_with_brackets(
     scope_integer_a_b_tokens,
+    a_scope_node,
+    b_scope_node,
     a_assignment_12_with_brackets_tokens,
     a_assignment_12_node,
 ):
@@ -193,6 +205,8 @@ def test_assignment_with_brackets(
     )
 
     expected_ast = StatementsNode()
+    expected_ast.add_node(a_scope_node)
+    expected_ast.add_node(b_scope_node)
     expected_ast.add_node(a_assignment_12_node)
 
     assert_ast_by_tokens(tokens, expected_ast)
@@ -200,6 +214,8 @@ def test_assignment_with_brackets(
 
 def test_assignment_with_many_brackets(
     scope_integer_a_b_tokens,
+    a_scope_node,
+    b_scope_node,
     a_assignment_12_with_many_brackets_tokens,
     a_assignment_12_node,
 ):
@@ -214,6 +230,8 @@ def test_assignment_with_many_brackets(
     )
 
     expected_ast = StatementsNode()
+    expected_ast.add_node(a_scope_node)
+    expected_ast.add_node(b_scope_node)
     expected_ast.add_node(a_assignment_12_node)
 
     assert_ast_by_tokens(tokens, expected_ast)
@@ -221,6 +239,8 @@ def test_assignment_with_many_brackets(
 
 def test_difficult_formula(
     scope_integer_a_b_tokens,
+    a_scope_node,
+    b_scope_node,
     a_b_difficult_fomula,
     a_b_difficult_fomula_node,
 ):
@@ -235,6 +255,8 @@ def test_difficult_formula(
     )
 
     expected_ast = StatementsNode()
+    expected_ast.add_node(a_scope_node)
+    expected_ast.add_node(b_scope_node)
     expected_ast.add_node(a_b_difficult_fomula_node)
 
     assert_ast_by_tokens(tokens, expected_ast)
