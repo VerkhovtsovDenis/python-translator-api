@@ -1,12 +1,15 @@
 from .ExpressionNode import ExpressionNode
 from LexicalAnalyzer import Token
+from SemanticalAnalyzer import Variable
 
 
 class VariableNode(ExpressionNode):
     """Класс для узла переменной."""
 
-    def __init__(self, token: Token, data_type):
-        self.variable = token
+    def __init__(self, varibale: Variable, data_type):
+        # TODO убрать data_type отсюда он и так в перемнной храниться
+        # нахуй он еще и тут
+        self.variable = varibale
         self.data_type = data_type
 
     def __eq__(self, value):
@@ -17,4 +20,4 @@ class VariableNode(ExpressionNode):
         )
 
     def to_python(self):
-        return self.variable.value
+        return self.variable.name

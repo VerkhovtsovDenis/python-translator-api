@@ -8,7 +8,7 @@ from SemanticalAnalyzer.AST import (
     BinaryOperatorNode,
     UnarOperatorNode,
 )
-from SemanticalAnalyzer.Variable import IntegerDataType
+from SemanticalAnalyzer.Variable import IntegerDataType, Variable
 
 
 @pytest.fixture
@@ -25,6 +25,36 @@ def scope_integer_a_b_tokens() -> list[Token]:
 
 
 @pytest.fixture
+def a_scope_node() -> BinaryOperatorNode:
+    left_operand = VariableNode(
+        Variable(IntegerDataType, "a"), data_type=IntegerDataType
+    )
+    right_operand = ValueNode("0", data_type=IntegerDataType)
+    assignment_node = BinaryOperatorNode(
+        Token(token_type=TokenTypes.ASSIGNMENT),
+        left_operand,
+        right_operand,
+        type_hint=True,
+    )
+    return assignment_node
+
+
+@pytest.fixture
+def b_scope_node() -> BinaryOperatorNode:
+    left_operand = VariableNode(
+        Variable(IntegerDataType, "b"), data_type=IntegerDataType
+    )
+    right_operand = ValueNode("0", data_type=IntegerDataType)
+    assignment_node = BinaryOperatorNode(
+        Token(token_type=TokenTypes.ASSIGNMENT),
+        left_operand,
+        right_operand,
+        type_hint=True,
+    )
+    return assignment_node
+
+
+@pytest.fixture
 def a_assignment_b_tokens() -> list[Token]:
     return (
         Token(token_type=TokenTypes.ID, value="a"),
@@ -37,10 +67,10 @@ def a_assignment_b_tokens() -> list[Token]:
 @pytest.fixture
 def a_assignment_b_node() -> BinaryOperatorNode:
     left_operand = VariableNode(
-        Token(token_type=TokenTypes.ID, value="a"), data_type=IntegerDataType
+        Variable(IntegerDataType, "a"), data_type=IntegerDataType
     )
     right_operand = VariableNode(
-        Token(token_type=TokenTypes.ID, value="b"), data_type=IntegerDataType
+        Variable(IntegerDataType, "b"), data_type=IntegerDataType
     )
     assignment_node = BinaryOperatorNode(
         Token(token_type=TokenTypes.ASSIGNMENT), left_operand, right_operand
@@ -61,10 +91,10 @@ def a_assignment_12_tokens() -> list[Token]:
 @pytest.fixture
 def a_assignment_12_node() -> BinaryOperatorNode:
     left_operand = VariableNode(
-        Token(token_type=TokenTypes.ID, value="a"), data_type=IntegerDataType
+        Variable(IntegerDataType, "a"), data_type=IntegerDataType
     )
     right_operand = ValueNode(
-        Token(token_type=TokenTypes.NUMBER_INTEGER, value="12"),
+        "12",
         data_type=IntegerDataType,
     )
     assignment_node = BinaryOperatorNode(
@@ -116,24 +146,22 @@ def a_b_difficult_fomula() -> list[Token]:
 @pytest.fixture
 def a_b_difficult_fomula_node() -> BinaryOperatorNode:
     left_operand = VariableNode(
-        Token(token_type=TokenTypes.ID, value="a"), data_type=IntegerDataType
+        Variable(IntegerDataType, "a"), data_type=IntegerDataType
     )
     right_operand = BinaryOperatorNode(
         Token(token_type=TokenTypes.MULTIPLY),
         BinaryOperatorNode(
             Token(token_type=TokenTypes.PLUS),
             ValueNode(
-                Token(token_type=TokenTypes.NUMBER_INTEGER, value="12"),
+                "12",
                 data_type=IntegerDataType,
             ),
             ValueNode(
-                Token(token_type=TokenTypes.NUMBER_INTEGER, value="10"),
+                "10",
                 data_type=IntegerDataType,
             ),
         ),
-        VariableNode(
-            Token(token_type=TokenTypes.ID, value="b"), data_type=IntegerDataType
-        ),
+        VariableNode(Variable(IntegerDataType, "b"), data_type=IntegerDataType),
     )
     assignment_node = BinaryOperatorNode(
         Token(token_type=TokenTypes.ASSIGNMENT), left_operand, right_operand
