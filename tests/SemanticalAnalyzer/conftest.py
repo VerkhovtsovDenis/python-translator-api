@@ -25,6 +25,36 @@ def scope_integer_a_b_tokens() -> list[Token]:
 
 
 @pytest.fixture
+def a_scope_node() -> BinaryOperatorNode:
+    left_operand = VariableNode(
+        Variable(IntegerDataType, "a"), data_type=IntegerDataType
+    )
+    right_operand = ValueNode("0", data_type=IntegerDataType)
+    assignment_node = BinaryOperatorNode(
+        Token(token_type=TokenTypes.ASSIGNMENT),
+        left_operand,
+        right_operand,
+        type_hint=True,
+    )
+    return assignment_node
+
+
+@pytest.fixture
+def b_scope_node() -> BinaryOperatorNode:
+    left_operand = VariableNode(
+        Variable(IntegerDataType, "b"), data_type=IntegerDataType
+    )
+    right_operand = ValueNode("0", data_type=IntegerDataType)
+    assignment_node = BinaryOperatorNode(
+        Token(token_type=TokenTypes.ASSIGNMENT),
+        left_operand,
+        right_operand,
+        type_hint=True,
+    )
+    return assignment_node
+
+
+@pytest.fixture
 def a_assignment_b_tokens() -> list[Token]:
     return (
         Token(token_type=TokenTypes.ID, value="a"),
