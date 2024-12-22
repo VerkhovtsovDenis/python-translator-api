@@ -372,6 +372,8 @@ class Parser:
             ast = StatementsNode()
             # Парсинг блоков, до основного кода программы.
             while not self._match(TokenTypes.BEGIN):
+                self._require(TokenTypes.PROGRAM, TokenTypes.VAR)
+
                 if self._current_token.token_type == TokenTypes.PROGRAM:
                     self._parse_program_block()
 
