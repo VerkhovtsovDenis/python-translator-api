@@ -15,3 +15,13 @@ class StatementsNode(ExpressionNode):
             isinstance(value, StatementsNode)
             and self.code_strings_nodes == value.code_strings_nodes
         )
+
+    def to_python(self, indent_level=0) -> str:
+        """
+        Преобразует ноду дерева в питон.
+
+        Raises:
+            NotImplementedError: Метод не реализован.
+        """
+
+        return "\n".join(node.to_python(indent_level) for node in self.code_strings_nodes)

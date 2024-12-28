@@ -16,10 +16,12 @@ class Lexer:
     """
 
     # Типы токенов, которые не будут возвращены
-    UNIMPORTANT_DELIMETERS = (
+    UNIMPORTANT_TOKENS = (
         TokenTypes.TABULATION,
         TokenTypes.NEWLINE,
         TokenTypes.WHITESPACE,
+        TokenTypes.MULTI_LINE_COMMENT,
+        TokenTypes.SINGLE_LINE_COMMENT,
     )
 
     def __init__(self, *, code: str):
@@ -60,7 +62,7 @@ class Lexer:
         while token:
             self._postprocess(token)
 
-            if token.token_type not in self.UNIMPORTANT_DELIMETERS:
+            if token.token_type not in self.UNIMPORTANT_TOKENS:
                 yield token
 
             token = self._get_next_token()
@@ -103,7 +105,7 @@ class Lexer:
             raise UnknowTokenError(
                 code=self._input[self._pos],
                 line=self._line,
-                pos=self._pos,
+                pos=self._relative_pos,
             )
 
         # За правильный токен, считаем самый длинный из возможных

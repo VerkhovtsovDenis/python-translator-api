@@ -112,6 +112,15 @@ OPERATORS_TOKENS = (
     TokenTypes.DIVISION,
     TokenTypes.DIV,
     TokenTypes.MOD,
+    TokenTypes.AND,
+    TokenTypes.OR,
+    TokenTypes.NOT,
+    TokenTypes.EQUAL,
+    TokenTypes.NOT_EQUAL,
+    TokenTypes.LESS_THAN,
+    TokenTypes.GREATER_THAN,
+    TokenTypes.LESS_THAN_OR_EQUAL,
+    TokenTypes.GREATER_THAN_OR_EQUAL,
 )
 
 KEYWORDS_OPERATORS_TOKENS = (

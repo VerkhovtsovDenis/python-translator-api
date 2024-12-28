@@ -24,13 +24,13 @@ class KeywordOperatorNode(ExpressionNode):
         TokenTypes.READLN: "input",
     }
 
-    def to_python(self) -> str:
+    def to_python(self, indent_level) -> str:
         python_code = self.KEYWORDOPERATOR_TOKEN_TYPES_TO_PYTHON[
             self.operator_token.token_type
         ]
-        params = ", ".join(param.to_python() for param in self.params)
+        params = ", ".join(param.to_python(indent_level=0) for param in self.params)
 
         if self.operator_token.token_type == TokenTypes.WRITE:
             params += ", sep=''"
 
-        return python_code + "(" + params + ")"
+        return indent_level * " " + python_code + "(" + params + ")"

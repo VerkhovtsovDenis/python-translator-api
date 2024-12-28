@@ -8,12 +8,14 @@ from .AST import (
     BinaryOperatorNode,
     UnarOperatorNode,
     KeywordOperatorNode,
+    IfNode,
 )
 from .Variable import (
     Variable,
     TOKEN_TYPE_TO_DATA_TYPE_MAP,
     VALUE_TOKEN_TYPE_TO_DATA_TYPE,
     BaseDataType,
+    BooleanDateType,
 )
 
 from .Erorrs import (
@@ -178,19 +180,19 @@ class Parser:
         Returns:
             list[ExpressionNode]: Список узлов ast.
         """
-        nodes = []
+        code_block_node = StatementsNode()
 
         self._require(TokenTypes.BEGIN)
         self._next_token()
 
         while not self._match(TokenTypes.END):
             node = self._parse_code_str()
-            nodes.append(node)
+            code_block_node.add_node(node)
 
         self._require(TokenTypes.END)
         self._next_token()
 
-        return nodes
+        return code_block_node
 
     def _parse_code_str(self) -> ExpressionNode:
         """
@@ -199,7 +201,11 @@ class Parser:
         Returns:
             ExpressionNode: Узел ast.
         """
-        # Первым в строчке кода может быть оператор, переменная, ...
+        # Первым в строчке кода может быть оператор, переменная, услолвие или цикл
+        # TODO сделать reqire
+        self._require(
+            *KEYWORDS_OPERATORS_TOKENS, TokenTypes.ID, TokenTypes.IF, TokenTypes.FOR
+        )
         if self._match(*KEYWORDS_OPERATORS_TOKENS):
             keyword_operator_node = self._parse_keyword_operator()
             self._require(TokenTypes.SEMICOLON)
@@ -227,9 +233,11 @@ class Parser:
             self._next_token()
 
             return BinaryOperatorNode(operator_token, variable_node, right_part)
+        elif self._match(TokenTypes.IF):
+            return self.parse_if()
 
     def _parse_formula(
-        self, expected_type: BaseDataType, brackets=False
+        self, expected_type: BaseDataType, brackets=False, without_type_check=False
     ) -> ExpressionNode:
         """
         Парсит формулу. Формула, это все то что может идти после оператора присваивания.
@@ -244,18 +252,18 @@ class Parser:
             TypeError: При не соответсвии типов.
         """
         left_node = (
-            self._parse_brackets_formula(expected_type)
+            self._parse_brackets_formula(expected_type, without_type_check)
             if self._match(TokenTypes.LEFT_BRACKET)
-            else self._parse_value_or_id(expected_type)
+            else self._parse_value_or_id(expected_type, without_type_check)
         )
         operator = self._current_token if self._match(*OPERATORS_TOKENS) else None
 
         while operator:
             self._next_token()
             right_node = (
-                self._parse_brackets_formula(expected_type)
+                self._parse_brackets_formula(expected_type, without_type_check)
                 if self._match(TokenTypes.LEFT_BRACKET)
-                else self._parse_value_or_id(expected_type)
+                else self._parse_value_or_id(expected_type, without_type_check)
             )
             left_node = BinaryOperatorNode(
                 operator, left_node, right_node, brackets=brackets
@@ -294,7 +302,10 @@ class Parser:
                     self._current_token.line,
                     self._current_token.pos,
                 )
-            node = ValueNode(self._current_token.value, data_type=expected_type)
+            node = ValueNode(
+                self._current_token.value,
+                data_type=VALUE_TOKEN_TYPE_TO_DATA_TYPE[self._current_token.token_type],
+            )
             self._next_token()
             return node
 
@@ -311,12 +322,15 @@ class Parser:
                     self._current_token.pos,
                 )
             node = VariableNode(
-                self._global_scope[self._current_token.value], data_type=expected_type
+                self._global_scope[self._current_token.value],
+                data_type=self._global_scope[self._current_token.value].data_type,
             )
             self._next_token()
             return node
 
-    def _parse_brackets_formula(self, expected_type: BaseDataType) -> ExpressionNode:
+    def _parse_brackets_formula(
+        self, expected_type: BaseDataType, without_type_check=False
+    ) -> ExpressionNode:
         """
         Парсит формулу в скобках.
 
@@ -331,7 +345,11 @@ class Parser:
         """
         self._require(TokenTypes.LEFT_BRACKET)
         self._next_token()
-        node = self._parse_formula(expected_type, brackets=True)
+        node = self._parse_formula(
+            expected_type,
+            brackets=True,
+            without_type_check=without_type_check,
+        )
         self._require(TokenTypes.RIGHT_BRACKET)
         self._next_token()
         return node
@@ -364,6 +382,28 @@ class Parser:
 
         return KeywordOperatorNode(keyword_token, params)
 
+    def parse_if(self) -> ExpressionNode:
+        """
+        Парсит  условное выражение.
+
+        Returns:
+            ExpressionNode: Узел ast.
+        """
+        self._require(TokenTypes.IF)
+        self._next_token()
+
+        condition_node = self._parse_formula(
+            expected_type=BaseDataType, without_type_check=True
+        )
+        self._require(TokenTypes.THEN)
+        self._next_token()
+        then_node = self._parse_code_block()
+        else_node = None
+        if self._match(TokenTypes.ELSE):
+            self._next_token()
+            else_node = self._parse_code_block()
+        return IfNode(then_node, else_node, condition_node)
+
     def parse_code(self) -> ExpressionNode | None:
         """Парсит весь код."""
         try:
@@ -386,13 +426,10 @@ class Parser:
             # В реальных компиляторах секция она обязательна.
             if self._current_token.token_type == TokenTypes.BEGIN:
                 try:
-
-                    for node in self._parse_code_block():
-                        ast.add_node(node)
+                    ast.add_node(self._parse_code_block())
                     self._require(TokenTypes.DOT)
                 except StopIteration:
                     raise UnExpectedTokenError("Dot expected.")
-                    self._require(TokenTypes.DOT)
             return ast
         except StopIteration:
             pass
