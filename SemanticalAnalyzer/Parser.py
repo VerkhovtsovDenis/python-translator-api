@@ -8,6 +8,7 @@ from .AST import (
     BinaryOperatorNode,
     KeywordOperatorNode,
     IfNode,
+    WhileNode,
 )
 from .Variable import (
     Variable,
@@ -201,7 +202,7 @@ class Parser:
         """
         # Первым в строчке кода может быть оператор, переменная, услолвие или цикл
         self._require(
-            *KEYWORDS_OPERATORS_TOKENS, TokenTypes.ID, TokenTypes.IF, TokenTypes.FOR
+            *KEYWORDS_OPERATORS_TOKENS, TokenTypes.ID, TokenTypes.IF, TokenTypes.WHILE
         )
         if self._match(*KEYWORDS_OPERATORS_TOKENS):
             keyword_operator_node = self._parse_keyword_operator()
@@ -232,6 +233,8 @@ class Parser:
             return BinaryOperatorNode(operator_token, variable_node, right_part)
         elif self._match(TokenTypes.IF):
             return self.parse_if()
+        elif self._match(TokenTypes.WHILE):
+            return self.parse_while()
 
     def _parse_formula(
         self, expected_type: BaseDataType, brackets=False, without_type_check=False
@@ -379,9 +382,27 @@ class Parser:
 
         return KeywordOperatorNode(keyword_token, params)
 
+    def parse_while(self) -> ExpressionNode:
+        """
+        Парсит цикл while.
+
+        Returns:
+            ExpressionNode: Узел ast.
+        """
+        self._require(TokenTypes.WHILE)
+        self._next_token()
+
+        condition_node = self._parse_formula(
+            expected_type=BaseDataType, without_type_check=True
+        )
+        self._require(TokenTypes.DO)
+        self._next_token()
+        body_node = self._parse_code_block()
+        return WhileNode(body_node, condition_node)
+
     def parse_if(self) -> ExpressionNode:
         """
-        Парсит  условное выражение.
+        Парсит условное выражение.
 
         Returns:
             ExpressionNode: Узел ast.

@@ -1,8 +1,6 @@
-from LexicalAnalyzer import TokenTypes
 from .ExpressionNode import ExpressionNode
 from .StatementsNode import StatementsNode
 from .BinaryOperatorNode import BinaryOperatorNode
-from LexicalAnalyzer import Token
 
 
 class IfNode(ExpressionNode):
@@ -29,13 +27,16 @@ class IfNode(ExpressionNode):
         indent = indent_level * " "
         python_code = indent + f"if {self.condition_node.to_python(indent_level=0)}:\n"
 
-        # TODO упростить логику
         if not self.then_node.code_strings_nodes:
-            python_code = python_code + " " * (indent_level + 4) + "pass"
-        python_code += self.then_node.to_python(indent_level=indent_level + 4)
+            python_code += (" " * (indent_level + 4) + "pass")
+        else:
+            python_code += self.then_node.to_python(indent_level=indent_level + 4)
+
         if self.else_node:
-            python_code = python_code + '\n' + indent_level * " " + "else:\n"
+            python_code += ('\n' + indent_level * " " + "else:\n")
+
             if not self.else_node.code_strings_nodes:
-                python_code = python_code + " " * (indent_level + 4) + "pass"
+                python_code += (" " * (indent_level + 4) + "pass")
+
             python_code += self.else_node.to_python(indent_level=indent_level + 4)
         return python_code

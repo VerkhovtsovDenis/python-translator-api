@@ -2,12 +2,12 @@ from Translator import Translator
 from constants import SupportLanguages
 
 
-def test_if_without_else():
+def test_while():
     pascal_code = "\n".join(
         [
             "var a: integer;",
             "begin",
-            "    if a then begin",
+            "    while a do begin",
             "       a:=1;",
             "    end",
             "end.",
@@ -16,7 +16,7 @@ def test_if_without_else():
     python_expected_code = "\n".join(
         [
             "a: int = 0",
-            "if a:",
+            "while a:",
             "    a = 1",
         ]
     )
@@ -27,12 +27,12 @@ def test_if_without_else():
     assert python_expected_code.strip() == actual_python_code
 
 
-def test_if_without_body():
+def test_while_without_body():
     pascal_code = "\n".join(
         [
             "var a: integer;",
             "begin",
-            "    if a then begin",
+            "    while a do begin",
             "    end",
             "end.",
         ]
@@ -40,7 +40,7 @@ def test_if_without_body():
     python_expected_code = "\n".join(
         [
             "a: int = 0",
-            "if a:",
+            "while a:",
             "    pass",
         ]
     )
@@ -51,48 +51,15 @@ def test_if_without_body():
     assert python_expected_code.strip() == actual_python_code
 
 
-def test_if_with_else():
-    pascal_code = "\n".join(
-        [
-            "var a: integer;",
-            "begin",
-            "    if a then begin",
-            "        a:=1;",
-            "    end",
-            "    else begin",
-            "        a:=2;",
-            "    end",
-            "end.",
-        ]
-    )
-    python_expected_code = "\n".join(
-        [
-            "a: int = 0",
-            "if a:",
-            "    a = 1",
-            "else:",
-            "    a = 2",
-        ]
-    )
-
-    actual_python_code = Translator.pascla_translate(
-        pascal_code, SupportLanguages.PYTHON
-    )
-    assert python_expected_code.strip() == actual_python_code
-
-
-def test_if_with_else_without_body():
+def test_nested_while():
     pascal_code = "\n".join(
         [
             "var a, b: integer;",
             "begin",
-            "    if a>b then begin",
+            "    while a>b do begin",
             "        writeln('первое число больше второго');",
-            "        if a>10 then begin",
+            "        while a>10 do begin",
             "            writeln('Первое число больше 10.');",
-            "        end",
-            "        else begin",
-            "            writeln('Первое число меньше или равно 10.');",
             "        end",
             "    end",
             "end.",
@@ -102,12 +69,10 @@ def test_if_with_else_without_body():
         [
             "a: int = 0",
             "b: int = 0",
-            "if a > b:",
+            "while a > b:",
             "    print('первое число больше второго')",
-            "    if a > 10:",
+            "    while a > 10:",
             "        print('Первое число больше 10.')",
-            "    else:",
-            "        print('Первое число меньше или равно 10.')",
         ]
     )
 
