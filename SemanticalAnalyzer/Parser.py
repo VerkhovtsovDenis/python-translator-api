@@ -6,7 +6,6 @@ from .AST import (
     ValueNode,
     VariableNode,
     BinaryOperatorNode,
-    UnarOperatorNode,
     KeywordOperatorNode,
     IfNode,
 )
@@ -134,7 +133,6 @@ class Parser:
 
     def _parse_type_scope(self):
         """Парсит объявление переменных одного из типов данных"""
-        # TODO нужно добавлять в аст присвоения с значениями по умолчанию для переменных.
         variables_names: list[str] = []
 
         self._require(TokenTypes.ID)
@@ -202,7 +200,6 @@ class Parser:
             ExpressionNode: Узел ast.
         """
         # Первым в строчке кода может быть оператор, переменная, услолвие или цикл
-        # TODO сделать reqire
         self._require(
             *KEYWORDS_OPERATORS_TOKENS, TokenTypes.ID, TokenTypes.IF, TokenTypes.FOR
         )

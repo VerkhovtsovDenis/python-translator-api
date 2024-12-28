@@ -20,4 +20,4 @@ class VariableNode(ExpressionNode):
         )
 
     def to_python(self, indent_level):
-        return indent_level * " " + self.variable.name
+        return self.variable.name

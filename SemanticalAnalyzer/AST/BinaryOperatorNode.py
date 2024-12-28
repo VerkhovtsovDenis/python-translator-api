@@ -62,8 +62,9 @@ class BinaryOperatorNode(ExpressionNode):
         if self.operator.token_type == TokenTypes.ASSIGNMENT and self.type_hint:
             type_hint = f": {DATA_TYPES_TO_PYTHON[self.left_operand.data_type]}"
 
+        indent = " " * indent_level
         return (
-            " " * indent_level
+            indent
             + left_bracket
             + self.left_operand.to_python(indent_level=0)
             + type_hint

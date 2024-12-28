@@ -29,8 +29,9 @@ class KeywordOperatorNode(ExpressionNode):
             self.operator_token.token_type
         ]
         params = ", ".join(param.to_python(indent_level=0) for param in self.params)
+        indent = " " * indent_level
 
         if self.operator_token.token_type == TokenTypes.WRITE:
             params += ", sep=''"
 
-        return indent_level * " " + python_code + "(" + params + ")"
+        return indent + python_code + "(" + params + ")"

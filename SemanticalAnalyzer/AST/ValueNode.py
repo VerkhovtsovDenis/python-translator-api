@@ -21,6 +21,6 @@ class ValueNode(ExpressionNode):
 
     def to_python(self, indent_level):
         if self.data_type not in (CharDataType, StringDataType):
-            return indent_level * " " + str(self.value)
+            return str(self.value)
         else:
-            return indent_level * " " + f"'{self.value}'"
+            return f"'{self.value}'"

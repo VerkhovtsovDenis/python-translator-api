@@ -26,9 +26,16 @@ class IfNode(ExpressionNode):
         )
 
     def to_python(self, indent_level) -> str:
-        python_code = indent_level * " " + f"if {self.condition_node.to_python(indent_level=0)}:\n"
+        indent = indent_level * " "
+        python_code = indent + f"if {self.condition_node.to_python(indent_level=0)}:\n"
+
+        # TODO упростить логику
+        if not self.then_node.code_strings_nodes:
+            python_code = python_code + " " * (indent_level + 4) + "pass"
         python_code += self.then_node.to_python(indent_level=indent_level + 4)
         if self.else_node:
             python_code = python_code + '\n' + indent_level * " " + "else:\n"
+            if not self.else_node.code_strings_nodes:
+                python_code = python_code + " " * (indent_level + 4) + "pass"
             python_code += self.else_node.to_python(indent_level=indent_level + 4)
         return python_code
