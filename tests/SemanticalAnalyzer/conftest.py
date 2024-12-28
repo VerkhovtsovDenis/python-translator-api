@@ -6,7 +6,6 @@ from SemanticalAnalyzer.AST import (
     ValueNode,
     VariableNode,
     BinaryOperatorNode,
-    UnarOperatorNode,
 )
 from SemanticalAnalyzer.Variable import IntegerDataType, Variable
 

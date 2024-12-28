@@ -19,7 +19,7 @@ class ValueNode(ExpressionNode):
             and self.data_type == value.data_type
         )
 
-    def to_python(self):
+    def to_python(self, indent_level):
         if self.data_type not in (CharDataType, StringDataType):
             return str(self.value)
         else:

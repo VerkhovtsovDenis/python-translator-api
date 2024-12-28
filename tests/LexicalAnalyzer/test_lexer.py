@@ -31,7 +31,6 @@ def test_get_lexem_simple_programm():
         TokenTypes.STRING,
         TokenTypes.RIGHT_BRACKET,
         TokenTypes.SEMICOLON,
-        TokenTypes.SINGLE_LINE_COMMENT,
         TokenTypes.END,
         TokenTypes.DOT,
     ]
@@ -73,7 +72,6 @@ def test_get_lexem_hard_programm():
         TokenTypes.REAL_TYPE,
         TokenTypes.SEMICOLON,
         TokenTypes.BEGIN,
-        TokenTypes.MULTI_LINE_COMMENT,
         # строка 9
         TokenTypes.WRITE,
         TokenTypes.LEFT_BRACKET,

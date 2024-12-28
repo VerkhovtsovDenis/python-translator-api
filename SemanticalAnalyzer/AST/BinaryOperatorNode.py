@@ -36,9 +36,18 @@ class BinaryOperatorNode(ExpressionNode):
         TokenTypes.DIV: "//",
         TokenTypes.MOD: "%",
         TokenTypes.ASSIGNMENT: "=",
+        TokenTypes.AND: "and",
+        TokenTypes.OR: "or",
+        TokenTypes.NOT: "not",
+        TokenTypes.EQUAL: "==",
+        TokenTypes.NOT_EQUAL: "!=",
+        TokenTypes.LESS_THAN: "<",
+        TokenTypes.GREATER_THAN: ">",
+        TokenTypes.LESS_THAN_OR_EQUAL: "<=",
+        TokenTypes.GREATER_THAN_OR_EQUAL: ">=",
     }
 
-    def to_python(self) -> str:
+    def to_python(self, indent_level) -> str:
         """
         Преобразует ноду дерева в питон.
 
@@ -53,13 +62,15 @@ class BinaryOperatorNode(ExpressionNode):
         if self.operator.token_type == TokenTypes.ASSIGNMENT and self.type_hint:
             type_hint = f": {DATA_TYPES_TO_PYTHON[self.left_operand.data_type]}"
 
+        indent = " " * indent_level
         return (
-            left_bracket
-            + self.left_operand.to_python()
+            indent
+            + left_bracket
+            + self.left_operand.to_python(indent_level=0)
             + type_hint
             + " "
             + self.OPERATOR_TOKEN_TYPES_TO_PYTHON[self.operator.token_type]
             + " "
-            + self.right_operand.to_python()
+            + self.right_operand.to_python(indent_level=0)
             + right_bracket
         )
