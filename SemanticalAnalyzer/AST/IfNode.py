@@ -1,7 +1,7 @@
 from .ExpressionNode import ExpressionNode
 from .StatementsNode import StatementsNode
 from .BinaryOperatorNode import BinaryOperatorNode
-
+from typing import Optional
 
 class IfNode(ExpressionNode):
     """Класс узла операторов для  AST."""
@@ -9,7 +9,7 @@ class IfNode(ExpressionNode):
     def __init__(
         self,
         then_node: StatementsNode,
-        else_node: StatementsNode | None,
+        else_node: Optional[StatementsNode],
         condition_node: BinaryOperatorNode,
     ):
         self.then_node = then_node

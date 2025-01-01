@@ -8,6 +8,7 @@ from .Errors import (
 from .Token import Token
 from .TokenType import TokenTypes, OPERATORS_TOKENS, DELIMETERS_TOKENS
 
+from typing import Optional
 
 class Lexer:
     """
@@ -67,7 +68,7 @@ class Lexer:
 
             token = self._get_next_token()
 
-    def _get_next_token(self) -> Token | None:
+    def _get_next_token(self) -> Optional[Token]:
         """
         Возвращает следующий токен и передвигает указатели.
 
