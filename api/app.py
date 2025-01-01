@@ -18,6 +18,6 @@ async def translate(translate_data: TranslateInput) -> TranslateOutput:
         result_code = Translator.pascla_translate(
             translate_data.pascal_code, translate_data.target_language
         )
-        return TranslateOutput(result_code=result_code, erors="")
+        return TranslateOutput(result_code=result_code, errors="")
     except Exception as e:
-        return TranslateOutput(result_code="", erors=str(e))
+        return TranslateOutput(result_code="", errors=str(e))

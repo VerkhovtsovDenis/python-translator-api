@@ -1,6 +1,6 @@
 from typing import Any
 from LexicalAnalyzer import TokenType, TokenTypes
-from .Erorrs import RedeceredIdError
+from .Errors import RedeceredIdError
 
 
 class BaseDataType:

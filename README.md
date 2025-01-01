@@ -46,7 +46,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
     {
         "result_code": "b: int = (a + 7) * 8\nprint(b, sep='')\n",
-        "erors": ""
+        "errors": ""
     }
 ```
 пример запроса:
@@ -60,7 +60,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
     {
     "result_code": "",
-    "erors": "Semantic error, Re-declared identifier 'a'."
+    "errors": "Semantic error, Re-declared identifier 'a'."
     }
 ```
 

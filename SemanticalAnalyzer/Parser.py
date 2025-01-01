@@ -18,7 +18,7 @@ from .Variable import (
     BooleanDateType,
 )
 
-from .Erorrs import (
+from .Errors import (
     RedeceredIdError,
     UnExpectedTokenError,
     TypeError,
@@ -33,6 +33,8 @@ from LexicalAnalyzer import (
     DATA_TYPES_TOKENS,
     OPERATORS_TOKENS,
 )
+
+from typing import Optional
 
 
 class Parser:
@@ -422,7 +424,7 @@ class Parser:
             else_node = self._parse_code_block()
         return IfNode(then_node, else_node, condition_node)
 
-    def parse_code(self) -> ExpressionNode | None:
+    def parse_code(self) -> Optional[ExpressionNode]:
         """Парсит весь код."""
         try:
             self._next_token()

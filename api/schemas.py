@@ -9,4 +9,4 @@ class TranslateInput(BaseModel):
 
 class TranslateOutput(BaseModel):
     result_code: str
-    erors: str
+    errors: str
