@@ -30,6 +30,7 @@ class TokenTypes(Enum):
     TABULATION = TokenType("tabulation", r"(\t)")
     NEWLINE = TokenType("newline", r"(\n)")
     SEMICOLON = TokenType("semicolon", r"(;)")
+    CARRIAGE_RETURN = TokenType("carriage return", r"(\r)")
 
     # keywords
     BEGIN = TokenType("begin", r"(Begin)")

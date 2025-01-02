@@ -23,6 +23,7 @@ class Lexer:
         TokenTypes.WHITESPACE,
         TokenTypes.MULTI_LINE_COMMENT,
         TokenTypes.SINGLE_LINE_COMMENT,
+        TokenTypes.CARRIAGE_RETURN,
     )
 
     def __init__(self, *, code: str):
