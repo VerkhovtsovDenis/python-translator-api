@@ -371,8 +371,8 @@ class Parser:
         self._next_token()
         params = []
 
-        while self._match(*VALUES, TokenTypes.ID):
-            param_node = self._parse_value_or_id(without_type_check=True)
+        while self._match(*VALUES, TokenTypes.ID, TokenTypes.LEFT_BRACKET):
+            param_node = self._parse_formula(expected_type=None, without_type_check=True)
             params.append(param_node)
             if self._match(TokenTypes.RIGHT_BRACKET):
                 break
