@@ -20,13 +20,13 @@ TODO:
 
 `docker compose up`
 
-документация доступна по `http://127.0.0.1:8000/docs/`
+документация доступна по `http://127.0.0.1:5000/docs/`
 
 ### Запуск сервера
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 5000 --reload
 
 ## Api
-эндпоинт - post `http://localhost:8000/translate`
+эндпоинт - post `http://localhost:5000/translate`
 тело запроса:
 ```
     {
