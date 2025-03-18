@@ -3,6 +3,8 @@ services:
     image: translator_app_image
     build:
       context: .
+    volumes:
+      - ./:/translator_app/
     container_name: translator_app
     ports:
       - 5000:5000

@@ -25,3 +25,13 @@ class StatementsNode(ExpressionNode):
         """
 
         return "\n".join(node.to_python(indent_level) for node in self.code_strings_nodes)
+    
+    def to_go(self, indent_level=0, variables = []) -> str:
+        """
+        Преобразует ноду дерева в го.
+
+        Raises:
+            NotImplementedError: Метод не реализован.
+        """
+
+        return "\n".join(node.to_go(indent_level, variables=variables) for node in self.code_strings_nodes)

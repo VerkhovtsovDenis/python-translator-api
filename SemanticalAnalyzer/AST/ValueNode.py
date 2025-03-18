@@ -24,3 +24,9 @@ class ValueNode(ExpressionNode):
             return str(self.value)
         else:
             return f"'{self.value}'"
+
+    def to_go(self, indent_level, variables):
+        if self.data_type not in (CharDataType, StringDataType):
+            return str(self.value)
+        else:
+            return f'"{self.value}"'

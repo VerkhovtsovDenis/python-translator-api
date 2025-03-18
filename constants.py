@@ -5,3 +5,4 @@ from enum import Enum
 # нужно посмотреть варики на работе
 class SupportLanguages(Enum):
     PYTHON = "python"
+    GO = "go"

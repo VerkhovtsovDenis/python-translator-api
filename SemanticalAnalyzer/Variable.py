@@ -60,6 +60,14 @@ DATA_TYPES_TO_PYTHON = {
     BooleanDateType: "bool",
 }
 
+DATA_TYPES_TO_GO = {
+    IntegerDataType: "int8",
+    RealDataType: "float32",
+    StringDataType: "string",
+    CharDataType: "string",
+    BooleanDateType: "bool",
+}
+
 
 class Variable:
 

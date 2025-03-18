@@ -30,3 +30,6 @@ class WhileNode(ExpressionNode):
         else:
             python_code += self.body_node.to_python(indent_level=indent_level + 4)
         return python_code
+    
+    def to_go(self, indent_level, variables) -> str:
+        raise ValueError("go не поддерживает цикл while")

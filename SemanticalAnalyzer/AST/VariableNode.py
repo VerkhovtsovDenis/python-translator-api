@@ -21,3 +21,6 @@ class VariableNode(ExpressionNode):
 
     def to_python(self, indent_level):
         return self.variable.name
+
+    def to_go(self, indent_level, variables):
+        return self.variable.name

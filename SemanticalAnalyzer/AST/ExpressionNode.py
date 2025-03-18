@@ -9,3 +9,12 @@ class ExpressionNode:
             NotImplementedError: Метод не реализован.
         """
         raise NotImplementedError()
+
+    def to_go(self, variables) -> str:
+        """
+        Преобразует ноду дерева в го.
+
+        Raises:
+            NotImplementedError: Метод не реализован.
+        """
+        raise NotImplementedError()

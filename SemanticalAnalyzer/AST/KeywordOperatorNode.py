@@ -35,3 +35,19 @@ class KeywordOperatorNode(ExpressionNode):
             params += ", sep=''"
 
         return indent + python_code + "(" + params + ")"
+
+    KEYWORDOPERATOR_TOKEN_TYPES_TO_GO = {
+        TokenTypes.WRITELN: "fmt.Println",
+        TokenTypes.WRITE: "fmt.Println",
+        TokenTypes.READ: "fmt.Scanln",
+        TokenTypes.READLN: "fmt.Scanln",
+    }
+    
+    def to_go(self, indent_level, variables) -> str:
+        go = self.KEYWORDOPERATOR_TOKEN_TYPES_TO_GO[
+            self.operator_token.token_type
+        ]
+        params = ", ".join(param.to_go(indent_level=0, variables=variables) for param in self.params)
+        indent = " " * indent_level
+
+        return indent + go + "(" + params + ")"
