@@ -9,6 +9,7 @@ app = FastAPI(
         "PascalTranslate API — это FastAPI приложение для трансляции "
         "pascal в другие языки программирования."
     ),
+    openapi_prefix="/translator-api",
 )
 
 
