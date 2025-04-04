@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: werf-guide-app
+  name: {{ .Values.appName }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: werf-guide-app
+      app: {{ .Values.appName }}
   template:
     metadata:
       labels:
-        app: werf-guide-app
+        app: {{ .Values.appName }}
     spec:
       imagePullSecrets:
       - name: registrysecret

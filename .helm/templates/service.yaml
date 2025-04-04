@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: werf-guide-app
+  name: {{ .Values.appName }}
 spec:
   selector:
-    app: werf-guide-app
+    app: {{ .Values.appName }}
   ports:
   - name: http
     port: 8000

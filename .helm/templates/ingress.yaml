@@ -1,17 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: {{ .Values.appName }}
   annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2  # Добавлено для правильного перенаправления
     kubernetes.io/ingress.class: nginx
-  name: werf-guide-app
 spec:
   rules:
   - http:
       paths:
-      - path: /translator
+      - path: /{{ .Values.appName }}(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: werf-guide-app
+            name: {{ .Values.appName }}
             port:
               number: 8000
