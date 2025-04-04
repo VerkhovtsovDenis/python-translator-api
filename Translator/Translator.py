@@ -7,7 +7,7 @@ from constants import SupportLanguages
 class Translator:
 
     @classmethod
-    def pascla_translate(self, pascal_code: str, target_language: SupportLanguages):
+    def pascal_translate(self, pascal_code: str, target_language: SupportLanguages):
         lexer = Lexer(code=pascal_code)
         tokens_gen = lexer.tokenize()
         parser = Parser(tokens_gen)

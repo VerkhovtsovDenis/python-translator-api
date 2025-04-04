@@ -16,7 +16,7 @@ app = FastAPI(
 @app.post("/translate")
 async def translate(translate_data: TranslateInput) -> TranslateOutput:
     try:
-        result_code = Translator.pascla_translate(
+        result_code = Translator.pascal_translate(
             translate_data.pascal_code, translate_data.target_language
         )
         return TranslateOutput(result_code=result_code, errors="")

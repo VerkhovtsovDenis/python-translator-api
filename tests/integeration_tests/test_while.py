@@ -21,7 +21,7 @@ def test_while():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
@@ -45,7 +45,7 @@ def test_while_without_body():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
@@ -76,7 +76,7 @@ def test_nested_while():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code

@@ -34,12 +34,12 @@ def test_if_without_else():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
     
-    actual_go_code = Translator.pascla_translate(
+    actual_go_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.GO
     )
     assert go_expected_code.strip() == actual_go_code
@@ -74,12 +74,12 @@ def test_if_without_body():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
     
-    actual_go_code = Translator.pascla_translate(
+    actual_go_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.GO
     )
     assert go_expected_code.strip() == actual_go_code
@@ -125,12 +125,12 @@ def test_if_with_else():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
     
-    actual_go_code = Translator.pascla_translate(
+    actual_go_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.GO
     )
     assert go_expected_code.strip() == actual_go_code
@@ -186,12 +186,12 @@ def test_if_with_else_without_body():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
 
-    actual_go_code = Translator.pascla_translate(
+    actual_go_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.GO
     )
     assert go_expected_code.strip() == actual_go_code

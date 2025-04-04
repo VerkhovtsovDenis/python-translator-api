@@ -39,12 +39,12 @@ def test_keywords_operator():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
 
-    actual_go_code = Translator.pascla_translate(
+    actual_go_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.GO
     )
     assert go_expected_code.strip() == actual_go_code
@@ -87,12 +87,12 @@ def test_keywords_operator_with_nested_brackets():
         ]
     )
 
-    actual_python_code = Translator.pascla_translate(
+    actual_python_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.PYTHON
     )
     assert python_expected_code.strip() == actual_python_code
     
-    actual_go_code = Translator.pascla_translate(
+    actual_go_code = Translator.pascal_translate(
         pascal_code, SupportLanguages.GO
     )
     assert go_expected_code.strip() == actual_go_code
