@@ -26,3 +26,32 @@ TODO:
 Подробнее с началом работы с werf можно ознакомится [тут](https://ru.werf.io/guides/django/100_basic/20_cluster.html).
 
 Приложение разворачивается по адресу `http://158.160.180.43/translator-api/`
+
+
+## Локальный запуск
+0. Установка python, git
+    1. Установить Python 3.12.3: https://www.python.org/downloads/
+    2. Установить Git: https://git-scm.com/downloads/
+    3. Установить Docker: https://www.docker.com/
+
+1. Клонирование репозитория
+```bash
+git clone https://github.com/VerkhovtsovDenis/python-translator-api.git
+```
+
+2. Создание и настройка виртуального окружения
+```bash
+cd python-translator-api
+python.exe -m pip install --upgrade pip
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+```
+
+3. Запуск контейнера
+```bash
+docker compose up -d
+```
+
+4. Использование
+Перейти по [http://127.0.0.1:5000/docs/](http://127.0.0.1:5000/docs/)
